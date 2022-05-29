@@ -11747,3 +11747,17 @@ body {
   border-color: #6DA8BE;
   letter-spacing:1px;
 }
+
+.btn-outline-del {
+  color: #de525f;
+  border-color: #de525f;
+}
+.btn-outline-del:hover {
+  color: #fff;
+  background-color: #de525f;
+  border-color: #de525f;
+}
+
+.btn-check:focus + .btn-outline-del, .btn-outline-del:focus {
+  box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.5);
+}

@@ -49,33 +49,46 @@
         </div>
     </div>
 
-    <table id="example" class="table table-bordered shadow-sm">
+    <table id="example" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
         <thead class="bg-th">
             <tr>
                 <th>投資計畫</th>
                 <th>預計每月投入</th>
                 <th>預計投資時程</th>
                 <th>投資風險屬性</th>
-                <th></th>
+                <th class="text-center"></th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>旅遊基金</td>
-                <td>15000</td>
-                <td>3-5個月</td>
-                <td>積極型</td>
-                <td>刪除</td>
-            </tr>
         </tbody>
     </table>
 </div>
 
 <script>
    $(document).ready(function () {
+       var Data = [
+           {"planInvest":"planB","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
+           {"planInvest":"planA","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
+           {"planInvest":"planC","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"}
+       ];
+
     $('#example').DataTable({
-        // searching: false, paging: true, info: false,
-        dom:'t<"mt-sm-3"p>',
+        dom:'t<"mt-sm-3 mb-sm-3"p>',
+        pageLength: 5,
+        data:Data,
+        columns:[
+            {data:"planInvest"},
+            {data:"monInvest"},
+            {data:"yearInvest"},
+            {data:"riskInvest"},
+            {render: function(){
+                return '<button class="btn btn-outline-del">刪除</button>'}
+            }
+            // {"data":null,"defaultContent":"<button>View</button>"}
+        ],
+        columnDefs: [
+            { className:"text-center", orderable: false, targets:-1 }
+        ]
         
     });
 }); 
