@@ -6,4 +6,95 @@
         <p class="small mb-0 text-white-50">Here you can design your own portfolio</p>
     </div>
 </header>
+<div class="container-fluid px-4">
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="card shadow-sm mb-4">   
+                <div class="card-body">     
+                    <form >
+                        <div class="text-darkgray row">
+                            <div class="col-auto">
+                                <label class="col-form-label fw-bold">選擇群組</label>
+                            </div>       
+                            <div class="col-md-4">
+                                <select id="stockGroup" class="form-control">
+                                </select>
+                            </div>
+                            <div class="col-auto mt-lg-0 mt-3">
+                                <button type="submit" class="btn btn-bg me-2">新增群組</button>
+                                <button type="submit" class="btn btn-outline-del">刪除群組</button>
+                            </div>     
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12"></div>
+        <div class="col-md-4 col-sm-8">  
+            <div class="float-end">
+                <div class="card shadow-sm mb-4 col-auto ">   
+                    <div class="card-body">
+                        <form>
+                            <div class="text-darkgray row">
+                                <div class="col-auto">
+                                    <input type="text" class="form-control" placeholder="請輸入股票代碼">
+                                </div>
+                                <div class="col-auto mt-sm-0 mt-md-3 mt-lg-0">
+                                    <button type="submit" class="btn btn-bg">加入</button>
+                                </div> 
+                            </div>                        
+                        </form> 
+                    </div>
+                </div>
+            </div>
+        </div>   
+    </div>
+
+    <table id="target_table" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
+        <thead class="bg-th">
+            <tr>
+                <th>股票代碼</th>
+                <th>名稱</th>
+                <th>最新收盤價</th>
+                <th>漲幅</th>
+                <th class="text-center"></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+   $(document).ready(function (){
+       var Data = [
+           {"stockID":"2330","stockName":"台積電", "closePrices":"514", "stockGain":"+16"}
+       ];
+
+        $('#target_table').DataTable({
+            dom:'t<"mt-sm-3 mb-sm-3"p>',
+            pageLength: 5,
+            data:Data,
+            columns:[
+                {data:"stockID"},
+                {data:"stockName"},
+                {data:"closePrices"},
+                {data:"stockGain"},
+                {render: function(){
+                    return '<button class="btn btn-outline-del">刪除</button>'}
+                }
+                // {"data":null,"defaultContent":"<button>View</button>"}
+            ],
+            columnDefs: [
+                { className:"text-center", orderable: false, targets:-1 }
+            ]
+            
+        });
+
+        $("#stockGroup").append(new Option("自選股群組", "1"));
+        $("#stockGroup").prop("selectedIndex", 0);
+    }); 
+</script>
 {% endblock %}

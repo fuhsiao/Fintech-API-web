@@ -37,19 +37,14 @@
                         </select>
                     </div>
                     <div class="form-group col-md-3">
-                            <button type="submit" class="btn btn-bg mt-3">新增計畫</button>
-                        
+                        <button type="submit" class="btn btn-bg mt-3">新增計畫</button>       
                     </div>                   
                 </div>
             </form>
-
-
-          <!-- <span>，預計投資時程，投資風險屬性</span> -->
-
         </div>
     </div>
 
-    <table id="example" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
+    <table id="target_table" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
         <thead class="bg-th">
             <tr>
                 <th>投資計畫</th>
@@ -65,33 +60,33 @@
 </div>
 
 <script>
-   $(document).ready(function () {
+   $(document).ready(function (){
        var Data = [
            {"planInvest":"planB","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
            {"planInvest":"planA","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
            {"planInvest":"planC","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"}
        ];
 
-    $('#example').DataTable({
-        dom:'t<"mt-sm-3 mb-sm-3"p>',
-        pageLength: 5,
-        data:Data,
-        columns:[
-            {data:"planInvest"},
-            {data:"monInvest"},
-            {data:"yearInvest"},
-            {data:"riskInvest"},
-            {render: function(){
-                return '<button class="btn btn-outline-del">刪除</button>'}
-            }
-            // {"data":null,"defaultContent":"<button>View</button>"}
-        ],
-        columnDefs: [
-            { className:"text-center", orderable: false, targets:-1 }
-        ]
-        
-    });
-}); 
+        $('#target_table').DataTable({
+            dom:'t<"mt-sm-3 mb-sm-3"p>',
+            pageLength: 5,
+            data:Data,
+            columns:[
+                {data:"planInvest"},
+                {data:"monInvest"},
+                {data:"yearInvest"},
+                {data:"riskInvest"},
+                {render: function(){
+                    return '<button class="btn btn-outline-del">刪除</button>'}
+                }
+                // {"data":null,"defaultContent":"<button>View</button>"}
+            ],
+            columnDefs: [
+                { className:"text-center", orderable: false, targets:-1 }
+            ]
+            
+        });
+    }); 
 </script>
 
 {% endblock %}
