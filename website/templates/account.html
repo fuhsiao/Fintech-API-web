@@ -6,4 +6,58 @@
         <p class="small mb-0 text-white-50">Here you can view and update your profile</p>
     </div>
 </header>
+
+<div class="container-fluid px-4">
+    <div class="card shadow-sm mb-4 col-md-7 text-darkgray fw-bold">   
+        <div class="card-body mx-auto">
+            <form>
+                <div class="mb-3 row">
+                  <div class="col-sm-2">
+                    <label class="col-form-label w-75 label-justify">姓名</label>
+                  </div>
+
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control">
+                </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-sm-2">
+                      <label class="col-form-label w-75 label-justify">帳號</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" disabled>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-sm-2">
+                      <label class="col-form-label w-75 label-justify">信箱</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                      <label class="col-form-label w-100 label-justify">變更密碼</label>
+                    </div>
+                    <div class="col-sm-12 col-md-3 mb-2">
+                      <input type="password" class="form-control" placeholder="原始密碼">
+                    </div>
+                    <div class="col-sm-12 col-md-3 mb-2">
+                        <input type="password" class="form-control" placeholder="新密碼">
+                    </div>
+                    <div class="col-sm-12 col-md-3 mb-22">
+                        <input type="password" class="form-control" placeholder="確認密碼">
+                    </div>
+                </div>
+                <hr>
+                <div class="mb-2">
+                    <button type="submit" class="btn btn-bg px-4">儲 存</button>   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}
