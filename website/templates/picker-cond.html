@@ -7,4 +7,95 @@
         <p class="small mb-0 mt-1 text-white-50">Stock picking by custom criteria, fundamental、technical analysis...</p>
     </div>
 </header>
+
+<div class="container-fluid px-4">
+    <div class="row">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <ul class="nav nav-pills mb-1" id="pills-tab">
+                        <li class="nav-item">
+                          <button class="nav-link active" id="pills-tab-1" data-bs-toggle="pill" data-bs-target="#tab1" type="button">基本面</button>
+                        </li>
+                        <li class="nav-item">
+                          <button class="nav-link" id="pills-tab-2" data-bs-toggle="pill" data-bs-target="#tab2" type="button">技術面</button>
+                        </li>
+                    </ul>
+                    <hr class="my-3" style="opacity: 0.2;">   
+                    <div class="tab-content"  id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="tab1">
+                            <div class="list-group overflow-scroll-y vh-40">
+                                <a href="#" class="list-group-item list-group-item-action">市值 大於 50 億</a>                             
+                                <a href="#" class="list-group-item list-group-item-action">本益比 小於 15 倍</a>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab2">
+                            <div class="list-group overflow-scroll-y vh-40">
+                                <a href="#" class="list-group-item list-group-item-action">今天 收盤 突破 季線</a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-darkgray fw-bold my-3">選股條件</h5>
+                    <hr class="my-3" style="opacity: 0.2;">
+                    <div class="list-group overflow-scroll-y vh-32 border">
+
+                    </div>
+                    <div class="float-end vh-8">
+                        <button type="button" class="btn btn-bg mt-3 me-2"><i class="fa-solid fa-magnifying-glass"></i> 開始選股</button>   
+                        <button type="button" class="btn btn-del mt-3">清除全部條件</button>         
+                    </div>
+                </div>
+            </div>     
+        </div>
+    </div>
+
+    <div class="col-md-12 mt-3">
+        <table id="picker_table2" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
+            <thead class="bg-th">
+                <tr>
+                    <th>股票代碼</th>
+                    <th>名稱</th>
+                    <th class="text-center" style="width: 10%;">追蹤個股</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function (){
+        var Data = [
+           {"stockID":"2330","stockName":"台積電"}
+       ];
+
+        $('#picker_table2').DataTable({
+            dom:'t<"mt-sm-3 mb-sm-3"p>',
+            pageLength: 5,
+            data:Data,
+            columns:[
+                {data:"stockID"},
+                {data:"stockName"},
+                {render: function(){
+                    return '<button class="btn btn-sm btn-outline-bg">加入</button>'}
+                }
+                // {"data":null,"defaultContent":"<button>View</button>"}
+            ],
+            columnDefs: [
+                { className:"text-center", orderable: false, targets:-1 }
+            ]
+            
+        });
+
+     }); 
+ </script>
+
 {% endblock %}
