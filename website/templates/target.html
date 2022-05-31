@@ -65,7 +65,7 @@
            {"planInvest":"planB","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
            {"planInvest":"planA","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
            {"planInvest":"planC","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"}
-       ];
+        ];
 
         $('#target_table').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
@@ -79,7 +79,6 @@
                 {render: function(){
                     return '<button class="btn btn-outline-del">刪除</button>'}
                 }
-                // {"data":null,"defaultContent":"<button>View</button>"}
             ],
             columnDefs: [
                 { className:"text-center", orderable: false, targets:-1 }
