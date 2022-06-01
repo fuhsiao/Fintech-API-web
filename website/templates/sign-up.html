@@ -27,30 +27,21 @@
                                     <form>
                                         <div class="row text-darkgray mt-2">
                                             <div class="col-md-3 mb-1">
-                                                <input type="text" class="form-control py-3" placeholder="投資計畫名稱">
+                                                <input type="text" class="form-control py-3" placeholder="投資計畫名稱" maxlength="30">
                                             </div>
                                             <div class="col-md-3 mb-1">
-                                                <select id="#" class="form-control py-3">
+                                                <select id="select-op1" class="form-control py-3">
                                                     <option disabled selected>預計每月投入</option>
-                                                    <option value="#">NTD 5,000</option>
-                                                    <option value="#">NTD 10,000</option>
-                                                    <option value="#">NTD 15,000</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mb-1">
-                                                <select id="#" class="form-control py-3">
+                                                <select id="select-op2" class="form-control py-3">
                                                     <option value="" disabled selected>預計投資時程</option>
-                                                    <option value="#">短期(3-5年)</option>
-                                                    <option value="#">中期(5-10年)</option>
-                                                    <option value="#">長期(≥10年)</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mb-1">
-                                                <select id="#" class="form-control py-3">
+                                                <select id="select-op3" class="form-control py-3">
                                                     <option value="" disabled selected>投資風險屬性</option>
-                                                    <option value="#">積極型</option>
-                                                    <option value="#">穩健型</option>
-                                                    <option value="#">保守型</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -58,25 +49,25 @@
                                         <div class="row mb-3">
                                             <div class="col-md-12">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" />
+                                                    <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" maxlength="30" />
                                                     <label for="inputFirstName">姓名</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" />
+                                            <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" maxlength="30"/>
                                             <label for="inputEmail">帳號</label>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputPassword" type="password" placeholder="Create a password" />
+                                                    <input class="form-control" id="inputPassword" type="password" placeholder="Create a password" maxlength="30"/>
                                                     <label for="inputPassword">密碼</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" />
+                                                    <input class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" maxlength="30"/>
                                                     <label for="inputPasswordConfirm">確認密碼</label>
                                                 </div>
                                             </div>
@@ -88,6 +79,9 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
+                                    {% for i in option %}
+                                    {{i.id}}
+                                    {% endfor %}
                                     <div class="small"><a class="text-muted" href="/login">已有帳戶? 立即登入!</a></div>
                                 </div>
                             </div>
@@ -106,5 +100,16 @@
             </footer>
         </div>
     </div>
+    <script>
+        $("#select-op1").append(new Option("{{op1[0].name}}", "{{op1[0].id}}"));
+        
+        // function setOption(select, options){
+        //     $.each(options, function(i){
+        //         console.log(i.id,i.name)
+        //     })
+        // }
+
+    </script>
+
 </body>
 </html>
