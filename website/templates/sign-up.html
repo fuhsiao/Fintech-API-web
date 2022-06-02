@@ -79,9 +79,6 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    {% for i in option %}
-                                    {{i.id}}
-                                    {% endfor %}
                                     <div class="small"><a class="text-muted" href="/login">已有帳戶? 立即登入!</a></div>
                                 </div>
                             </div>
@@ -101,13 +98,24 @@
         </div>
     </div>
     <script>
-        $("#select-op1").append(new Option("{{op1[0].name}}", "{{op1[0].id}}"));
-        
-        // function setOption(select, options){
-        //     $.each(options, function(i){
-        //         console.log(i.id,i.name)
-        //     })
-        // }
+        var a = JSON.parse('{{options|tojson}}')
+        function setOptions(options){
+            $.each(options,function(index,value){
+                switch (value.category){
+                    case 'op1':
+                        $("#select-op1").append(new Option(value.name,value.id));
+                        break;
+                    case 'op2':
+                        $("#select-op2").append(new Option(value.name,value.id));
+                        break;
+                    case 'op3':
+                        $("#select-op3").append(new Option(value.name,value.id));
+                        break;
+                }
+            })
+        }
+
+        setOptions(a)
 
     </script>
 
