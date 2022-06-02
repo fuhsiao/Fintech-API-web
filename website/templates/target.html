@@ -10,34 +10,28 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title text-darkgray fw-bold mb-3">設置您的 投資計畫</h5>
-            <form >
+            <form method="POST" action="addnewPlan">
                 <div class="row text-darkgray align-items-end">
                     <div class="col-md-2">
                         <label class="my-2">計畫名稱</label>
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" name="new_planName" placeholder="投資計畫名稱" maxlength="25" required>
                     </div>
                     <div class="col-md-2">
                         <label class="my-2">預計每月投入</label>
-                        <select id="#" class="form-control">
-                            <option selected>NTD 5,000</option>
-                            <option value="#">NTD 10,000</option>
-                            <option value="#">NTD 15,000</option>
+                        <select class="form-control" id ="select-op1" name="monthlyInvest" required>
+                            <option value=""> </option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="my-2">預計投資時程</label>
-                        <select id="#" class="form-control">
-                            <option selected>短期(3-5年)</option>
-                            <option value="#">中期(5-10年)</option>
-                            <option value="#">長期(≥10年)</option>
+                        <select class="form-control" id="select-op2" name="planTime" required>
+                            <option value=""> </option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="my-2">投資風險屬性</label>
-                        <select id="#" class="form-control">
-                            <option selected>積極型</option>
-                            <option value="#">穩健型</option>
-                            <option value="#">保守型</option>
+                        <select class="form-control" id="select-op3"  name="planRisk" required>
+                            <option value=""> </option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -62,13 +56,17 @@
         </tbody>
     </table>
 </div>
-
+<!-- setting selection options -->
+<script src="{{ url_for('static', filename = 'js/select-options.js') }}"></script>
 <script>
+    var options = JSON.parse('{{options|tojson}}')
+    setOptions(options)
    $(document).ready(function (){
+
+        
+
        var Data = [
            {"planInvest":"planB","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
-           {"planInvest":"planA","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
-           {"planInvest":"planC","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"}
         ];
 
         $('#target_table').DataTable({

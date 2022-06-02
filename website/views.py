@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
+from .models import Mapping_code
 
 views = Blueprint('views',__name__)
 
@@ -12,7 +13,18 @@ def Index():
 @views.route('/target')
 @login_required
 def Target():
-    return render_template('target.html', user = current_user)
+    # get selector options
+    opCode = Mapping_code.query.filter(Mapping_code.category.in_(['op1','op2','op3'])).all()
+    options = list(map(lambda Mapping_code:Mapping_code.serialize(),opCode))
+    return render_template('target.html', user = current_user , options = options)
+
+@views.route('/addnewPlan', methods=['GET','POST'])
+@login_required
+def Add_newPlan():
+    print('dsaas')
+    if request.method == 'POST':
+        return redirect(url_for('views.Target'))
+
 
 @views.route('/portfolio')
 @login_required
