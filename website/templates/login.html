@@ -30,22 +30,26 @@
                                             <div class="alert alert-info py-2 mb-md-0 text-center" role="alert">
                                                 {{message}}
                                             </div>
+                                        {% else %}
+                                            <div class="alert alert-danger py-2 mb-md-0 text-center" role="alert">
+                                                {{message}}
+                                            </div>
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
                                 {% endwith %}
                                 <div class="card-body">
-                                    <form>
+                                    <form method="POST">
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" />
-                                            <label for="inputEmail">帳號</label>
+                                            <input type="text" class="form-control" id="inputAccount" name="userAccount" placeholder="Enter your Account" required />
+                                            <label for="inputAccount">帳號</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputPassword" type="password" placeholder="Password" />
-                                            <label for="inputPassword">密碼</label>
+                                            <input type="password" class="form-control" id="inputPwd" name="userPwd" placeholder="Enter password" required />
+                                            <label for="inputPwd">密碼</label>
                                         </div>
                                         <div class="text-center mt-4 mb-0">
-                                            <a class="btn btn-bg px-4" href="/index">登 入</a>
+                                            <button type="submit" class="btn btn-bg btn-block">登 入</button>
                                         </div>
                                     </form>
                                 </div>

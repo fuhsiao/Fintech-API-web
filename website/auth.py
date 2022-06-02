@@ -1,13 +1,30 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user
 from .models import Mapping_code, Users, Invest_plan
 from . import db
 
 auth = Blueprint('auth',__name__)
 
-@auth.route('/login')
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        userAccount = request.form.get('userAccount')
+        userPwd = request.form.get('userPwd')
+
+        user = Users.query.filter_by(account=userAccount).first()
+        if user:
+            if check_password_hash(user.password, userPwd):
+                print('success')
+                login_user(user, remember=True)
+                return redirect(url_for('views.Index'))
+            else:
+                flash('密碼錯誤 ! 請重新輸入', category='error')
+        else:
+            flash('此帳號不存在', category='error')
+
     return render_template('login.html')
+
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
@@ -50,3 +67,9 @@ def sign_up():
             return redirect(url_for('auth.login'))
     
     return render_template('sign-up.html', options = options)
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login'))
