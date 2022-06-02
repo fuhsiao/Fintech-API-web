@@ -18,29 +18,40 @@
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
-                <div class="container">
+                <div class="container"> 
                     <div class="row justify-content-center">
                         <div class="col-lg-8">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header"><h3 class="text-center font-weight-light my-2">註冊</h3></div>
+                                {% with messages = get_flashed_messages(with_categories=true) %} 
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        {% if category == 'error' %}
+                                            <div class="alert alert-danger py-2 mb-md-0" role="alert">
+                                                {{message}}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% endwith %}
                                 <div class="card-body">
-                                    <form>
+                                    <form method="POST">
                                         <div class="row text-darkgray mt-2">
                                             <div class="col-md-3 mb-1">
-                                                <input type="text" class="form-control py-3" placeholder="投資計畫名稱" maxlength="30">
+                                                <input type="text" class="form-control py-3" name="planName" placeholder="投資計畫名稱" maxlength="25" required>
                                             </div>
                                             <div class="col-md-3 mb-1">
-                                                <select id="select-op1" class="form-control py-3">
-                                                    <option disabled selected>預計每月投入</option>
+                                                <select class="form-control py-3" id="select-op1" name="monthlyInvest" required>
+                                                    <option value="" disabled selected>預計每月投入</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mb-1">
-                                                <select id="select-op2" class="form-control py-3">
+                                                <select class="form-control py-3" id="select-op2" name="planTime" required>
                                                     <option value="" disabled selected>預計投資時程</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mb-1">
-                                                <select id="select-op3" class="form-control py-3">
+                                                <select class="form-control py-3" id="select-op3"  name="planRisk" required>
                                                     <option value="" disabled selected>投資風險屬性</option>
                                                 </select>
                                             </div>
@@ -49,32 +60,33 @@
                                         <div class="row mb-3">
                                             <div class="col-md-12">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" maxlength="30" />
-                                                    <label for="inputFirstName">姓名</label>
+                                                    <input type="text" class="form-control" id="inputName" name="userName" placeholder="Enter your name" maxlength="25" required/>
+                                                    <label for="inputName">姓名</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" maxlength="30"/>
-                                            <label for="inputEmail">帳號</label>
+                                            <input type="text" class="form-control" id="inputAccount" name="userAccount" placeholder="Enter user account" maxlength="20" required/>
+                                            <label for="inputAccount">帳號</label>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputPassword" type="password" placeholder="Create a password" maxlength="30"/>
-                                                    <label for="inputPassword">密碼</label>
+                                                    <input type="password" class="form-control" id="inputPwd" name="userPwd" placeholder="Enter password" maxlength="20" required/>
+                                                    <label for="inputPwd">密碼</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputPasswordConfirm" type="password" placeholder="Confirm password" maxlength="30"/>
-                                                    <label for="inputPasswordConfirm">確認密碼</label>
+                                                    <input type="password" class="form-control" id="inputPwdConfirm" name="userPwdConfirm" placeholder="Confirm password" maxlength="20" required/>
+                                                    <label for="inputPwdConfirm">確認密碼</label>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
+                                        </div>     
                                         <div class="mt-4 mb-0">
-                                            <div class="d-grid"><a class="btn btn-bg btn-block" href="/login">創建帳戶</a></div>
+                                            <div class="d-grid">
+                                                <button type="submit" class="btn btn-bg btn-block">創建帳戶</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -97,26 +109,11 @@
             </footer>
         </div>
     </div>
+    <!-- setting selection options -->
+    <script src="{{ url_for('static', filename = 'js/select-options.js') }}"></script>
     <script>
-        var a = JSON.parse('{{options|tojson}}')
-        function setOptions(options){
-            $.each(options,function(index,value){
-                switch (value.category){
-                    case 'op1':
-                        $("#select-op1").append(new Option(value.name,value.id));
-                        break;
-                    case 'op2':
-                        $("#select-op2").append(new Option(value.name,value.id));
-                        break;
-                    case 'op3':
-                        $("#select-op3").append(new Option(value.name,value.id));
-                        break;
-                }
-            })
-        }
-
-        setOptions(a)
-
+        var options = JSON.parse('{{options|tojson}}')
+        setOptions(options)
     </script>
 
 </body>

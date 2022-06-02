@@ -23,6 +23,17 @@
                         <div class="col-lg-5">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header"><h3 class="text-center font-weight-light my-4">創智投資專家</h3></div>
+                                {% with messages = get_flashed_messages(with_categories=true) %} 
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        {% if category == 'success' %}
+                                            <div class="alert alert-info py-2 mb-md-0 text-center" role="alert">
+                                                {{message}}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% endwith %}
                                 <div class="card-body">
                                     <form>
                                         <div class="form-floating mb-3">

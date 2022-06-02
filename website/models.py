@@ -1,20 +1,20 @@
 from . import db
 
-class User(db.Model):
+class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     account = db.Column(db.String(20), unique=True)
-    password = db.Column(db.String(20))
+    password = db.Column(db.String(120))
     name = db.Column(db.String(20))
-    enail = db.Column(db.String(45))
-    investplan = db.relationship('InvestPlan')
+    email = db.Column(db.String(45))
+    # investplan = db.relationship('Invest_plan')
 
-class InvestPlan(db.Model):
+class Invest_plan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     plan_name = db.Column(db.String(45))
     plan_monthly_invest = db.Column(db.Integer)
     plan_time = db.Column(db.Integer)
     plan_risk = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class Mapping_code(db.Model):
     id = db.Column(db.Integer, primary_key=True)
