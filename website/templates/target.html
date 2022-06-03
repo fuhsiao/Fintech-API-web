@@ -41,7 +41,6 @@
             </form>
         </div>
     </div>
-
     <table id="target_table" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
         <thead class="bg-th">
             <tr>
@@ -56,37 +55,49 @@
         </tbody>
     </table>
 </div>
-<!-- setting selection options -->
+
 <script src="{{ url_for('static', filename = 'js/select-options.js') }}"></script>
 <script>
-    var options = JSON.parse('{{options|tojson}}')
-    setOptions(options)
+    // 刪除 投資計畫
+    function del_plan (id) {
+        $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/deletePlan",
+                dataType: "json",
+                data: JSON.stringify(id), // or the string: 'id=1'
+                complete:
+                function () {
+                    window.location = "/target";
+                }
+        });
+    };
+
+    
    $(document).ready(function (){
+        var options = JSON.parse('{{options|tojson}}')
+        var user_plans = JSON.parse('{{user_plans|tojson}}')
 
-        
-
-       var Data = [
-           {"planInvest":"planB","monInvest":"NTD 5000", "yearInvest":"短期(3-5年)", "riskInvest":"積極型"},
-        ];
+        setOptions(options)
 
         $('#target_table').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
             pageLength: 5,
-            data:Data,
+            data:user_plans,
             columns:[
-                {data:"planInvest"},
-                {data:"monInvest"},
-                {data:"yearInvest"},
-                {data:"riskInvest"},
-                {render: function(){
-                    return '<button class="btn btn-outline-del">刪除</button>'}
+                {data:"planName"},
+                {data:"monInvest_text"},
+                {data:"planTime_text"},
+                {data:"planRisk_text"},
+                {data:"id", render: function(data, type, row){
+                    return '<button class="btn btn-outline-del" onclick=del_plan('+data+')>刪除</button>'}
                 }
             ],
             columnDefs: [
                 { className:"text-center", orderable: false, targets:-1 }
-            ]
-            
+            ]   
         });
+
     }); 
 </script>
 
