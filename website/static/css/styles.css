@@ -2489,8 +2489,8 @@ textarea.form-control-lg {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  -webkit-print-color-adjust: exact;
-          color-adjust: exact;
+  /* -webkit-print-color-adjust: exact;
+          color-adjust: exact; */
 }
 .form-check-input[type=checkbox] {
   border-radius: 0.25em;
@@ -3313,7 +3313,7 @@ textarea.form-control-lg {
 
 .btn-outline-secondary {
   color: #6c757d;
-  border-color: #6c757d;
+  border-color: #ced4da;
 }
 .btn-outline-secondary:hover {
   color: #fff;

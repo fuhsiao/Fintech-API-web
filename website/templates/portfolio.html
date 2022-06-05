@@ -12,21 +12,30 @@
             <div class="float-start">
                 <div class="card shadow-sm mb-4 col-auto">   
                     <div class="card-body">     
-                        <form >
-                            <div class="text-darkgray row">
-                                <div class="col-auto">
-                                    <label class="col-form-label fw-bold">選擇群組</label>
-                                </div>       
-                                <div class="col-md-auto col-sm-12">
-                                    <select id="stockGroup" class="form-control">
-                                    </select>
-                                </div>
-                                <div class="col-md-auto col-sm-12 mt-lg-0 mt-3">
-                                    <button type="submit" class="btn btn-bg me-2">新增群組</button>
-                                    <button type="submit" class="btn btn-outline-del">刪除群組</button>
-                                </div>        
+                        <div class="text-darkgray row">
+                            <div class="col-auto">
+                                <label class="col-form-label fw-bold">選擇群組</label>
+                            </div>       
+                            <div class="col-md-auto col-sm-12">
+                                <select id="stockGroup" class="form-control">
+                                </select>
                             </div>
-                        </form>
+                            <div class="col-md-auto col-sm-12 mt-lg-0 mt-3">
+                                <div class="d-inline">
+                                    <button tpye="button" class="btn btn-bg me-2" data-bs-toggle="modal" data-bs-target="#add_ProtfolioModal">新增群組</button>
+                                </div>
+                                <!-- <button type="button" class="btn btn-outline-del" data-bs-toggle="modal" data-bs-target="#del_ProtfolioModal">刪除群組</button> -->
+                                <div class="dropdown d-inline" >
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_ProtfolioModal">修改群組名稱</a></li>
+                                      <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#del_ProtfolioModal">刪除群組</a></li>
+                                    </ul>
+                                  </div>
+                            </div>        
+                        </div>
                     </div>
                 </div>
             </div>       
@@ -65,7 +74,60 @@
         </tbody>
     </table>
 </div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="add_ProtfolioModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">群組名稱</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body row">
+            <div class="col-8 mb-2">
+                <input type="text" class="form-control" id="portfolio-name">
+            </div>
+            <div class="col-4">
+                <button type="button" class="btn btn-bg">新增</button>
+            </div>
+        </div>      
+      </div>
+    </div>
+  </div>
 
+  <div class="modal fade" id="edit_ProtfolioModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">修改群組名稱</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body row">
+            <div class="col-8 mb-2">
+                <input type="text" class="form-control" id="portfolio-name">
+            </div>
+            <div class="col-4">
+                <button type="button" class="btn btn-bg">確認</button>
+            </div>
+        </div>      
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="del_ProtfolioModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">是否刪除此群組?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body ">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-del">確認刪除</button>
+        </div>      
+      </div>
+    </div>
+  </div>
 
 <script>
    $(document).ready(function (){
