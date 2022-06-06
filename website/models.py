@@ -10,7 +10,7 @@ class Users(db.Model, UserMixin):
     name = db.Column(db.String(20))
     email = db.Column(db.String(45))
     investplan = db.relationship('Invest_plan',  backref='Users')
-    portfolio = db.relationship('Portfolio', backref='Users')
+    portfolios = db.relationship('Portfolios', backref='Users')
 
 class Invest_plan(db.Model):
     __tablename__ = 'invest_plan'
@@ -49,7 +49,7 @@ class Invest_plan(db.Model):
         }
 
 
-class Portfolio(db.Model):
+class Portfolios(db.Model):
     __tablename__ = 'portfolio'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45))

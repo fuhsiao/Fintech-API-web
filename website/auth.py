@@ -6,12 +6,12 @@ from . import db
 
 auth = Blueprint('auth',__name__)
 
+# 登入
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         userAccount = request.form.get('userAccount')
         userPwd = request.form.get('userPwd')
-
         user = Users.query.filter_by(account=userAccount).first()
         if user:
             if check_password_hash(user.password, userPwd):
@@ -22,16 +22,14 @@ def login():
                 flash('密碼錯誤 ! 請重新輸入', category='error')
         else:
             flash('此帳號不存在', category='error')
-
     return render_template('login.html')
 
-
+# 註冊
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     # get selector options
     opCode = Mapping_code.query.filter(Mapping_code.category.in_(['op1','op2','op3'])).all()
     options = list(map(lambda Mapping_code:Mapping_code.serialize(),opCode))
-    # get form data
     if request.method == 'POST':
         planName = request.form.get('planName')
         monthlyInvest = request.form.get('monthlyInvest')
@@ -41,10 +39,8 @@ def sign_up():
         userAccount = request.form.get('userAccount')
         userPwd = request.form.get('userPwd')
         userPwdConfirm = request.form.get('userPwdConfirm')
-
         # check if account exists
         user = Users.query.filter_by(account=userAccount).first()
-
         if user:
             flash('此帳號已存在!', category='error')
         elif len(userAccount) < 5:
@@ -65,9 +61,9 @@ def sign_up():
             db.session.commit()
             flash('註冊成功! 請重新登入', category='success')
             return redirect(url_for('auth.login'))
-    
     return render_template('sign-up.html', options = options)
 
+# 登出
 @auth.route('/logout')
 @login_required
 def logout():
