@@ -1,7 +1,8 @@
+from email.policy import default
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from mysqlx import PoolError
-from .models import Mapping_code, Invest_plan, Portfolios
+from .models import Mapping_code, Invest_plan, Portfolios, Stocks
 from . import db
 import json
 
@@ -28,11 +29,17 @@ def Target():
     return render_template('target.html', user = current_user , options = options, user_plans = user_plans )    
 
 # 投資組合
-@views.route('/portfolio')
+@views.route('/portfolio', defaults={'index':0})
+@views.route('/portfolio/<index>')
 @login_required
-def Portfolio():
+def Portfolio(index):
     user_portfolios = list(map(lambda Portfolios:Portfolios.serialize(Portfolios.id),current_user.portfolios))
-    return render_template('portfolio.html', user = current_user, user_portfolios = user_portfolios)
+    portfolio_index = user_portfolios[int(index)]['id']
+    this_portfolio = Portfolios.query.filter_by(id=portfolio_index).first()
+    
+    current_portfolio = list(map(lambda Stocks:Stocks.serialize(),this_portfolio.selected_stocks))
+
+    return render_template('portfolio.html', user = current_user, user_portfolios = user_portfolios, portfolio = current_portfolio, portfolio_index = index)
 
 # 選股-個人推薦
 @views.route('/picker-oneself')
@@ -83,7 +90,6 @@ def Add_newPlan():
 def Delete_Plan() -> None:
     plan_id = json.loads(request.data)
     plan = Invest_plan.query.get(plan_id)
-    # 確認是否為 計畫主人
     if plan.user_id == current_user.id:
         db.session.delete(plan)
         db.session.commit()
@@ -106,12 +112,13 @@ def add_portfolio():
 def edit_portfolio_name():
     if request.method == 'POST':
         portfolio_id = request.form.get('portfolio_id')
+        portfolio_index = request.form.get('index')
         portfolio_newName = request.form.get('portfolio_newName')
         portfolio = Portfolios.query.get(portfolio_id)
         if portfolio.user_id == current_user.id:
             portfolio.name = portfolio_newName
             db.session.commit()
-    return redirect(url_for('views.Portfolio'))
+    return redirect(url_for('views.Portfolio', index=portfolio_index))
     
 # 刪除投資組合 (Portfolio)
 @views.route('/delete_portfolio', methods=['POST'])
@@ -125,6 +132,28 @@ def delete_portfolio():
             db.session.commit()
     return redirect(url_for('views.Portfolio'))
 
+# 新增股票 (Portfolio)
+@views.route('/add_stock_by_id', methods=['POST'])
+@login_required
+def add_stock_by_id():
+    if request.method == 'POST':
+        stock_id = request.form.get('stock_id')
+        portfolio_id = request.form.get('portfolio_id')
+        portfolio_index = request.form.get('index')
+        stock = Stocks.query.get(stock_id)
+        this_portfolio = Portfolios.query.filter_by(id=portfolio_id).first()
+        if stock and (stock not in this_portfolio.selected_stocks): 
+            this_portfolio.selected_stocks.append(stock)
+            db.session.commit()
+    return redirect(url_for('views.Portfolio',index=portfolio_index))
+
+# 投資組合 分頁路由 (Portfolio)
+@views.route('/portfolio_index_router', methods=['POST'])
+@login_required
+def portfolio_index_router():
+    portfolio_index = request.form['index']
+    return redirect(url_for('views.Portfolio',index=portfolio_index))
+
 
 # ===================== other methods =====================
 
@@ -135,7 +164,7 @@ def mapping_codeValue(id, options):
             return i['name']
     return ""
 
-# 取的 投資計畫 表格欄的對應名稱
+# 取得 投資計畫 表格欄的對應名稱
 def mapping_investplanText(plans, options):
     for i in plans:
         i.monInvest_text = mapping_codeValue(i.plan_monthly_invest, options)

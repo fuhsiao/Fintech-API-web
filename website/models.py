@@ -48,12 +48,18 @@ class Invest_plan(db.Model):
             "planRisk_text":self.planRisk_text
         }
 
+Portfolios_Stocks = db.Table('Portfolio_stock',
+    db.Column('pd_id', db.Integer, db.ForeignKey('portfolio.id')),
+    db.Column('stock_id', db.Integer, db.ForeignKey('stock.id'))
+)
+
 
 class Portfolios(db.Model):
     __tablename__ = 'portfolio'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    selected_stocks = db.relationship('Stocks', secondary=Portfolios_Stocks, backref = 'stocks')
 
     def __init__(self, name, user_id):
         self.name = name
@@ -63,6 +69,21 @@ class Portfolios(db.Model):
         return{
             "id":portfolio_id,
             "name":self.name
+        }
+
+class Stocks(db.Model):
+    __tablename__ = 'stock'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(45))
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+        
+    def serialize(self):
+        return{
+            "stock_id":self.id,
+            "stock_name":self.name
         }
 
 class Mapping_code(db.Model):

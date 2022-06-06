@@ -44,10 +44,12 @@
             <div class="float-end">
                 <div class="card shadow-sm mb-4 col-auto ">   
                     <div class="card-body">
-                        <form>
+                        <form method="POST" action="/add_stock_by_id">
                             <div class="text-darkgray row">
                                 <div class="col-auto">
-                                    <input type="text" class="form-control" placeholder="請輸入股票代碼">
+                                    <input type="hidden" class="form-control" name="index" id = "addstock_portfolio_index">
+                                    <input type="hidden" name="portfolio_id" id = "selected_portfolio_id_to_addStock">
+                                    <input type="number" class="form-control" name="stock_id" placeholder="請輸入股票代碼" required>
                                 </div>
                                 <div class="col-auto mt-sm-0 mt-md-3 mt-lg-0">
                                     <button type="submit" class="btn btn-bg">加入</button>
@@ -110,6 +112,7 @@
         <div class="modal-body">
             <form method="POST" action="/edit_portfolio_name" class="row">
                 <div class="col-8 mb-2">
+                    <input type="hidden" class="form-control" name="index" id = "rename_portfolio_index">
                     <input type="hidden" class="form-control" name="portfolio_id" id = "selected_portfolio_id_to_rename">
                     <input type="text" class="form-control" name="portfolio_newName" required>
                 </div>
@@ -142,23 +145,25 @@
 </div>
 
 <script>
-    var portfolios = JSON.parse('{{user_portfolios|tojson}}')
-    setPortfolio_options(portfolios)
+    var user_portfolios = JSON.parse('{{user_portfolios|tojson}}')
+    var portfolio = JSON.parse('{{portfolio|tojson}}')
+    setPortfolio_options(user_portfolios)
+    getData_by_change_select()
+    $("#stock-portfolios").prop("selectedIndex", '{{portfolio_index}}');
+    setPortfolio_id()
    $(document).ready(function (){
        
-       var Data = [
-           {"stockID":"2330","stockName":"台積電", "closePrices":"514", "stockGain":"+16"}
-        ];
+       
 
         $('#target_table').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
             pageLength: 5,
-            data:Data,
+            data:portfolio,
             columns:[
-                {data:"stockID"},
-                {data:"stockName"},
-                {data:"closePrices"},
-                {data:"stockGain"},
+                {data:"stock_id"},
+                {data:"stock_name"},
+                {"data":null,"defaultContent":""},
+                {"data":null,"defaultContent":""},
                 {render: function(){
                     return '<button class="btn btn-outline-del">刪除</button>'}
                 }
@@ -170,8 +175,9 @@
             
         });
 
-        $("#stockGroup").append(new Option("自選股群組", "1"));
-        $("#stockGroup").prop("selectedIndex", 0);
+        // $("#stockGroup").append(new Option("自選股群組", "1"));
+
+        
     }); 
 </script>
 {% endblock %}

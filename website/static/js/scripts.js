@@ -46,15 +46,46 @@ function setOptions(options){
 function setPortfolio_options(options){
     $.each(options,function(index,value){
         $("#stock-portfolios").append(new Option(value.name,value.id));
-        // $("#selected_portfolio_id").val(value.id);
     });
 }
 
 // 取得 目前選擇群組 - id
-function getPortfolio_id(){
+function setPortfolio_id(){
     id = $("#stock-portfolios").val();
+    index = $("#stock-portfolios").prop('selectedIndex')
+    $("#rename_portfolio_index").val(index)
+    $("#addstock_portfolio_index").val(index)
     $("#selected_portfolio_id_to_rename").val(id)
     $("#selected_portfolio_id_to_delete").val(id)
-    console.log(id)
+    $("#selected_portfolio_id_to_addStock").val(id)
 }
+
+// function getValue_by_change_select(){
+//     $('#stock-portfolios').on('change', function() {
+//         $("#selected_portfolio_id_to_addStock").val(this.value)
+//       });
+// }
+
+// post like form
+function url_redirect(options){
+    var $form = $("<form />");
     
+    $form.attr("action",options.url);
+    $form.attr("method",options.method);
+    
+    for (var data in options.data)
+    $form.append('<input type="hidden" name="'+data+'" value="'+options.data[data]+'" />');
+     
+    $("body").append($form);
+    $form.submit();
+}
+
+function getData_by_change_select(){
+    $('#stock-portfolios').on('change', function() {
+        id = $("#stock-portfolios").val();
+        selectedIndex = $("#stock-portfolios").prop('selectedIndex')
+        console.log(selectedIndex)
+        debugger
+        url_redirect({url:'/portfolio_index_router', method: "post",data: {"index":selectedIndex}});
+      });
+}
