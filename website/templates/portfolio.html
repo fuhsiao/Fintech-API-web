@@ -17,7 +17,7 @@
                                 <label class="col-form-label fw-bold">選擇群組</label>
                             </div>       
                             <div class="col-md-auto col-sm-12">
-                                <select id="stockGroup" class="form-control">
+                                <select id="stock-portfolios" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-auto col-sm-12 mt-lg-0 mt-3">
@@ -30,8 +30,8 @@
                                         <i class="fa-solid fa-gear"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_ProtfolioModal">修改群組名稱</a></li>
-                                      <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#del_ProtfolioModal">刪除群組</a></li>
+                                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_ProtfolioModal" onclick=getPortfolio_id()>修改群組名稱</a></li>
+                                      <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#del_ProtfolioModal" onclick=getPortfolio_id()>刪除群組</a></li>
                                     </ul>
                                   </div>
                             </div>        
@@ -73,13 +73,13 @@
         <tbody>
         </tbody>
     </table>
-    {% for i in current_user.portfolio %}
+    {% for i in current_user.portfolios %}
     {{ i.name }}
     {% endfor %}
 </div>
   
-  <!-- Modal -->
-  <div class="modal fade" id="add_ProtfolioModal" tabindex="-1">
+  <!-- Modal 新增群組-->
+<div class="modal fade" id="add_ProtfolioModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -98,44 +98,54 @@
         </div>      
       </div>
     </div>
-  </div>
-
-  <div class="modal fade" id="edit_ProtfolioModal" tabindex="-1">
+</div>
+<!-- Modal 修改群組名稱-->
+<div class="modal fade" id="edit_ProtfolioModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">修改群組名稱</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body row">
-            <div class="col-8 mb-2">
-                <input type="text" class="form-control" id="portfolio-name">
-            </div>
-            <div class="col-4">
-                <button type="button" class="btn btn-bg">確認</button>
-            </div>
+        <div class="modal-body">
+            <form method="POST" action="/edit_portfolio_name" class="row">
+                <div class="col-8 mb-2">
+                    <input type="hidden" class="form-control" name="portfolio_id" id = "selected_portfolio_id_to_rename">
+                    <input type="text" class="form-control" name="portfolio_newName" required>
+                </div>
+                <div class="col-4">
+                    <button type="submit" class="btn btn-bg">確認</button>
+                </div>
+            </form>
         </div>      
       </div>
     </div>
-  </div>
-
-  <div class="modal fade" id="del_ProtfolioModal" tabindex="-1">
+</div>
+<!-- Modal 刪除群組-->
+<div class="modal fade" id="del_ProtfolioModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">是否刪除此群組?</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body ">
+        <div class="modal-body">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-del">確認刪除</button>
+            <form method="POST" action="/delete_portfolio" class="d-inline">
+                <input type="hidden" class="form-control" name="portfolio_id" id = "selected_portfolio_id_to_delete">
+                <button type="submit" class="btn btn-del">確認刪除</button>
+            </form>
+            
         </div>      
       </div>
     </div>
-  </div>
+</div>
 
 <script>
+    var portfolios = JSON.parse('{{user_portfolios|tojson}}')
+    setPortfolio_options(portfolios)
    $(document).ready(function (){
+       
        var Data = [
            {"stockID":"2330","stockName":"台積電", "closePrices":"514", "stockGain":"+16"}
         ];

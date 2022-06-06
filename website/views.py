@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from flask_login import login_required, current_user
+from mysqlx import PoolError
 from .models import Mapping_code, Invest_plan, Portfolios
 from . import db
 import json
@@ -30,7 +31,8 @@ def Target():
 @views.route('/portfolio')
 @login_required
 def Portfolio():
-    return render_template('portfolio.html', user = current_user)
+    user_portfolios = list(map(lambda Portfolios:Portfolios.serialize(Portfolios.id),current_user.portfolios))
+    return render_template('portfolio.html', user = current_user, user_portfolios = user_portfolios)
 
 # 選股-個人推薦
 @views.route('/picker-oneself')
@@ -98,6 +100,30 @@ def add_portfolio():
         db.session.commit()
     return redirect(url_for('views.Portfolio'))
 
+# 修改組合名稱 (Portfolio)
+@views.route('/edit_portfolio_name', methods=['POST'])
+@login_required
+def edit_portfolio_name():
+    if request.method == 'POST':
+        portfolio_id = request.form.get('portfolio_id')
+        portfolio_newName = request.form.get('portfolio_newName')
+        portfolio = Portfolios.query.get(portfolio_id)
+        if portfolio.user_id == current_user.id:
+            portfolio.name = portfolio_newName
+            db.session.commit()
+    return redirect(url_for('views.Portfolio'))
+    
+# 刪除投資組合 (Portfolio)
+@views.route('/delete_portfolio', methods=['POST'])
+@login_required
+def delete_portfolio():
+    if request.method == 'POST':
+        portfolio_id = request.form.get('portfolio_id')
+        portfolio = Portfolios.query.get(portfolio_id)
+        if portfolio.user_id == current_user.id:
+            db.session.delete(portfolio)
+            db.session.commit()
+    return redirect(url_for('views.Portfolio'))
 
 
 # ===================== other methods =====================
