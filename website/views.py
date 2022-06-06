@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from .models import Mapping_code, Invest_plan, Users
+from .models import Mapping_code, Invest_plan, Portfolio
 from . import db
 import json
 
@@ -14,9 +14,6 @@ def Index():
 
 
 # 投資取向 (介面)
-# ---------------------
-# options = 對應 選項文字
-# user_plans = 對應 投資計畫 欄位文字
 @views.route('/target', methods=['GET','POST'])
 @login_required
 def Target():
@@ -60,8 +57,19 @@ def Delete_Plan() -> None:
 
 @views.route('/portfolio')
 @login_required
-def Portfolio():
+def MyPortfolio():
     return render_template('portfolio.html', user = current_user)
+
+@views.route('/add_portfolio', methods=['POST'])
+@login_required
+def add_portfolio():
+    if request.method == 'POST':
+        portfolio_name = request.form.get('portfolio_name')
+        new_portfolio = Portfolio(name=portfolio_name, user_id=current_user.id)
+        db.session.add(new_portfolio)
+        db.session.commit()
+    return redirect(url_for('views.MyPortfolio'))
+
 
 @views.route('/picker-oneself')
 @login_required

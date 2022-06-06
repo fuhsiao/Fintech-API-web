@@ -3,14 +3,17 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from . import db
 
 class Users(db.Model, UserMixin):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     account = db.Column(db.String(20), unique=True)
     password = db.Column(db.String(120))
     name = db.Column(db.String(20))
     email = db.Column(db.String(45))
     investplan = db.relationship('Invest_plan',  backref='Users')
+    portfolio = db.relationship('Portfolio', backref='Users')
 
 class Invest_plan(db.Model):
+    __tablename__ = 'invest_plan'
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     plan_name = db.Column(db.String(45))
     plan_monthly_invest = db.Column(db.Integer)
@@ -44,9 +47,26 @@ class Invest_plan(db.Model):
             "planTime_text":self.planTime_text,
             "planRisk_text":self.planRisk_text
         }
-        
+
+
+class Portfolio(db.Model):
+    __tablename__ = 'portfolio'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(45))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __init__(self, name, user_id):
+        self.name = name
+        self.user_id = user_id
+
+    def serialize(self, portfolio_id):
+        return{
+            "id":portfolio_id,
+            "name":self.name
+        }
 
 class Mapping_code(db.Model):
+    __tablename__ = 'mapping_code'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45))
     category = db.Column(db.String(45))
