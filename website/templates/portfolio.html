@@ -30,8 +30,8 @@
                                         <i class="fa-solid fa-gear"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_ProtfolioModal" onclick=getPortfolio_id()>修改群組名稱</a></li>
-                                      <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#del_ProtfolioModal" onclick=getPortfolio_id()>刪除群組</a></li>
+                                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_ProtfolioModal">修改群組名稱</a></li>
+                                      <li><a class="dropdown-item text-danger" id ="delete_portfolio_btn" href="#" data-bs-toggle="modal" data-bs-target="#del_ProtfolioModal">刪除群組</a></li>
                                     </ul>
                                   </div>
                             </div>        
@@ -148,6 +148,7 @@
     getData_by_change_select()
     $("#stock-portfolios").prop("selectedIndex", '{{portfolio_index}}');
     setPortfolio_id()
+    judge_delete_portfolio_disable()
    $(document).ready(function (){
        
        

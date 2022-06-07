@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user
-from .models import Mapping_code, Users, Invest_plan
+
+from website.views import Portfolio
+from .models import Mapping_code, Users, Invest_plan, Portfolios
 from . import db
 
 auth = Blueprint('auth',__name__)
@@ -58,6 +60,9 @@ def sign_up():
             this_user = Users.query.with_entities(Users.id).filter_by(account=userAccount).first() 
             new_plan = Invest_plan(plan_name=planName, plan_monthly_invest=monthlyInvest, plan_time=planTime, plan_risk=planRisk, user_id=this_user.id)
             db.session.add(new_plan)
+            db.session.commit()
+            new_portfolio = Portfolios(name='我的自選股',user_id=this_user.id)
+            db.session.add(new_portfolio)
             db.session.commit()
             flash('註冊成功! 請重新登入', category='success')
             return redirect(url_for('auth.login'))

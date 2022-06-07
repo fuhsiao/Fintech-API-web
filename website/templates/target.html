@@ -10,7 +10,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title text-darkgray fw-bold mb-3">設置您的 投資計畫</h5>
-            <form method="POST" action="addnewPlan">
+            <form method="POST" action="add_newPlan">
                 <div class="row text-darkgray align-items-end">
                     <div class="col-md-2">
                         <label class="my-2">計畫名稱</label>
@@ -56,30 +56,13 @@
     </table>
 </div>
 
-<script src="{{ url_for('static', filename = 'js/select-options.js') }}"></script>
 <script>
-    // 刪除 投資計畫
-    function del_plan (id) {
-        $.ajax({
-                type: "POST",
-                contentType: "application/json; charset=utf-8",
-                url: "/deletePlan",
-                dataType: "json",
-                data: JSON.stringify(id), // or the string: 'id=1'
-                complete:
-                function () {
-                    window.location = "/target";
-                }
-        });
-    };
-
-    
+ 
    $(document).ready(function (){
         var options = JSON.parse('{{options|tojson}}')
-        var user_plans = JSON.parse('{{user_plans|tojson}}')
-
         setOptions(options)
 
+        var user_plans = JSON.parse('{{user_plans|tojson}}')
         $('#target_table').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
             pageLength: 5,
@@ -91,14 +74,13 @@
                 {data:"planRisk_text"},
                 {data:null, render: function(data){
                     debugger
-                    return '<button class="btn btn-outline-del" onclick=del_plan('+data.id+')>刪除</button>'}
+                    return '<button class="btn btn-outline-del" onclick=delete_plan('+data.id+')>刪除</button>'}
                 }
             ],
             columnDefs: [
                 { className:"text-center", orderable: false, targets:-1 }
             ]   
         });
-
     }); 
 </script>
 

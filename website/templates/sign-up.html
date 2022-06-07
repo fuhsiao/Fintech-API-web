@@ -110,7 +110,6 @@
         </div>
     </div>
     <!-- setting selection options -->
-    <script src="{{ url_for('static', filename = 'js/select-options.js') }}"></script>
     <script>
         var options = JSON.parse('{{options|tojson}}')
         setOptions(options)

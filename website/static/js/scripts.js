@@ -60,12 +60,6 @@ function setPortfolio_id(){
     $("#selected_portfolio_id_to_addStock").val(id)
 }
 
-// function getValue_by_change_select(){
-//     $('#stock-portfolios').on('change', function() {
-//         $("#selected_portfolio_id_to_addStock").val(this.value)
-//       });
-// }
-
 // post like form
 function url_redirect(options){
     var $form = $("<form />");
@@ -80,6 +74,7 @@ function url_redirect(options){
     $form.submit();
 }
 
+// 切換群組 - 重整頁面至對應資料表格
 function getData_by_change_select(){
     $('#stock-portfolios').on('change', function() {
         id = $("#stock-portfolios").val();
@@ -90,8 +85,21 @@ function getData_by_change_select(){
       });
 }
 
+// 刪除 股票
 function delete_stock(stock_id){
     selectedIndex = $("#stock-portfolios").prop('selectedIndex')
     portfolio_id = $("#stock-portfolios").val();
     url_redirect({url:'/delete_stock', method: "post", data: {"stock_id":stock_id,"portfolio_id":portfolio_id, "index":selectedIndex}})
+}
+
+    // 刪除 投資計畫
+ function delete_plan (plan_id) {
+    url_redirect({url:'/delete_plan', method: "post", data: {"plan_id":plan_id}})
+}
+
+// 判斷是否顯示 刪除投資組合選項
+function judge_delete_portfolio_disable(){
+    if($("#stock-portfolios>option").length < 2){
+        $("#delete_portfolio_btn").addClass('disabled d-none')
+    }
 }

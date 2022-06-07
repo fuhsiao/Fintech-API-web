@@ -70,9 +70,9 @@ def Set_account():
 # ===================== CRUD methods =====================
 
 # 新增計畫 (Target)
-@views.route('/addnewPlan', methods=['POST'])
+@views.route('/add_newPlan', methods=['POST'])
 @login_required
-def Add_newPlan():
+def add_newPlan():
     if request.method == 'POST':
         new_planName = request.form.get('new_planName')
         monthlyInvest = request.form.get('monthlyInvest')
@@ -85,15 +85,15 @@ def Add_newPlan():
     return jsonify({})
 
 # 刪除計畫 (Target)
-@views.route('/deletePlan', methods=['POST'])
+@views.route('/delete_plan', methods=['POST'])
 @login_required
-def Delete_Plan() -> None:
-    plan_id = json.loads(request.data)
+def delete_Plan():
+    plan_id = request.form.get('plan_id')
     plan = Invest_plan.query.get(plan_id)
     if plan.user_id == current_user.id:
         db.session.delete(plan)
         db.session.commit()
-    return jsonify({})
+    return redirect(url_for('views.Target'))
 
 # 新增投資組合 (Portfolio)
 @views.route('/add_portfolio', methods=['POST'])
@@ -138,10 +138,10 @@ def delete_portfolio():
 def add_stock_by_id():
     if request.method == 'POST':
         stock_id = request.form.get('stock_id')
-        portfolio_id = request.form.get('portfolio_id')
-        portfolio_index = request.form.get('index')
         stock = Stocks.query.get(stock_id)
-        this_portfolio = Portfolios.query.filter_by(id=portfolio_id).first()
+        portfolio_index = request.form.get('index')
+        portfolio_id = request.form.get('portfolio_id')
+        this_portfolio = Portfolios.query.get(portfolio_id)
         if stock and (stock not in this_portfolio.selected_stocks): 
             this_portfolio.selected_stocks.append(stock)
             db.session.commit()
@@ -151,11 +151,11 @@ def add_stock_by_id():
 @views.route('/delete_stock',methods=['POST'])
 @login_required
 def delete_stock():
-    if request.method == 'POST':
-        portfolio_index = request.form.get('index')
+    if request.method == 'POST':    
         stock_id = request.form.get('stock_id')
-        portfolio_id = request.form.get('portfolio_id')
         stock = Stocks.query.get(stock_id)
+        portfolio_index = request.form.get('index')
+        portfolio_id = request.form.get('portfolio_id')   
         this_portfolio = Portfolios.query.get(portfolio_id)
         if this_portfolio.user_id == current_user.id:
             this_portfolio.selected_stocks.remove(stock)
