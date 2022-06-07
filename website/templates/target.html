@@ -89,8 +89,9 @@
                 {data:"monInvest_text"},
                 {data:"planTime_text"},
                 {data:"planRisk_text"},
-                {data:"id", render: function(data, type, row){
-                    return '<button class="btn btn-outline-del" onclick=del_plan('+data+')>刪除</button>'}
+                {data:null, render: function(data){
+                    debugger
+                    return '<button class="btn btn-outline-del" onclick=del_plan('+data.id+')>刪除</button>'}
                 }
             ],
             columnDefs: [

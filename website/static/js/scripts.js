@@ -75,7 +75,7 @@ function url_redirect(options){
     
     for (var data in options.data)
     $form.append('<input type="hidden" name="'+data+'" value="'+options.data[data]+'" />');
-     
+    
     $("body").append($form);
     $form.submit();
 }
@@ -88,4 +88,10 @@ function getData_by_change_select(){
         debugger
         url_redirect({url:'/portfolio_index_router', method: "post",data: {"index":selectedIndex}});
       });
+}
+
+function delete_stock(stock_id){
+    selectedIndex = $("#stock-portfolios").prop('selectedIndex')
+    portfolio_id = $("#stock-portfolios").val();
+    url_redirect({url:'/delete_stock', method: "post", data: {"stock_id":stock_id,"portfolio_id":portfolio_id, "index":selectedIndex}})
 }

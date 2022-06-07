@@ -147,6 +147,21 @@ def add_stock_by_id():
             db.session.commit()
     return redirect(url_for('views.Portfolio',index=portfolio_index))
 
+# 刪除股票 (Portfolio)
+@views.route('/delete_stock',methods=['POST'])
+@login_required
+def delete_stock():
+    if request.method == 'POST':
+        portfolio_index = request.form.get('index')
+        stock_id = request.form.get('stock_id')
+        portfolio_id = request.form.get('portfolio_id')
+        stock = Stocks.query.get(stock_id)
+        this_portfolio = Portfolios.query.get(portfolio_id)
+        if this_portfolio.user_id == current_user.id:
+            this_portfolio.selected_stocks.remove(stock)
+            db.session.commit()
+    return redirect(url_for('views.Portfolio',index=portfolio_index))
+
 # 投資組合 分頁路由 (Portfolio)
 @views.route('/portfolio_index_router', methods=['POST'])
 @login_required
