@@ -4,7 +4,9 @@ from flask_login import login_required, current_user
 from mysqlx import PoolError
 from .models import Mapping_code, Invest_plan, Portfolios, Stocks
 from . import db
+import requests
 import json
+from random import randrange
 
 views = Blueprint('views',__name__)
 
@@ -186,3 +188,31 @@ def mapping_investplanText(plans, options):
         i.planTime_text = mapping_codeValue(i.plan_time, options)
         i.planRisk_text = mapping_codeValue(i.plan_risk, options)
     return plans
+
+@views.route('/get_realtimeData',methods=['POST'])
+def get_realtimeData():
+    stock = json.loads(dict(request.form)['portfolio_stock'])
+    
+    for i in stock:
+        # dealts = api_dealts(i['stock_id'])
+        # i['price'] = dealts['price']
+        i['price'] = randrange(100)
+    return jsonify({'data':stock})
+
+
+jwt ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMDI0IiwiaWF0IjoxNjU0NjU4MTY1LCJpc3MiOiIydUtBOE8xYU1iUUs2ZFpCT0M0UGpWRnJlOW9NWjM3byJ9.HFYDRUDYXM7kCqRa0iFUJzyNzCsmNHgLrHqHhQc9ybk"
+
+def api_dealts(symbolId):
+    url = "https://api.fintechspace.com.tw/realtime/v0.3/intraday/dealts"
+    params = {
+        "symbolId": symbolId,
+        "apiToken": '4af7c90c0eac7cd5ee3d289f00045bbb',
+        "oddLot": 'false',
+        "limit": 1,
+        "offset": 0,
+        "jwt": jwt
+    }
+
+    response = requests.request("GET", url, params = params)
+
+    return json.loads(response.text)['data']['dealts'][0]

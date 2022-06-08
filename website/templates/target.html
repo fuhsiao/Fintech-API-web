@@ -57,7 +57,7 @@
 </div>
 
 <script>
- 
+    var user_plans = JSON.parse('{{user_plans|tojson}}')
    $(document).ready(function (){
         var options = JSON.parse('{{options|tojson}}')
         setOptions(options)

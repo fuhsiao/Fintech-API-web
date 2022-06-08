@@ -67,7 +67,7 @@
             <tr>
                 <th>股票代碼</th>
                 <th>名稱</th>
-                <th>最新收盤價</th>
+                <th>成交價</th>
                 <th>漲幅</th>
                 <th class="text-center"></th>
             </tr>
@@ -143,6 +143,8 @@
 
 <script>
     var user_portfolios = JSON.parse('{{user_portfolios|tojson}}')
+    var p1 = '{{portfolio}}'
+    var portfolio_stock = '{{portfolio|tojson}}' 
     var portfolio = JSON.parse('{{portfolio|tojson}}')
     setPortfolio_options(user_portfolios)
     getData_by_change_select()
@@ -153,14 +155,18 @@
        
        
 
-        $('#target_table').DataTable({
+        var target_table = $('#target_table').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
             pageLength: 5,
-            data:portfolio,
+            ajax:{
+                url:"/get_realtimeData",
+                type:"POST",
+                data: {portfolio_stock}
+            },
             columns:[
                 {data:"stock_id"},
                 {data:"stock_name"},
-                {"data":null,"defaultContent":""},
+                {data:"price"},
                 {"data":null,"defaultContent":""},
                 {data:null,render: function(data){
                     return '<button class="btn btn-outline-del" onclick="delete_stock('+data.stock_id+')">刪除</button>'}
@@ -173,6 +179,10 @@
             
         });
 
+        setInterval( function () {
+            console.log('refresh')
+            target_table.ajax.reload();
+        }, 5000 );
         // $("#stockGroup").append(new Option("自選股群組", "1"));
 
         
