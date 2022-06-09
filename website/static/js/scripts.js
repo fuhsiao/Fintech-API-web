@@ -92,7 +92,7 @@ function delete_stock(stock_id){
     url_redirect({url:'/delete_stock', method: "post", data: {"stock_id":stock_id,"portfolio_id":portfolio_id, "index":selectedIndex}})
 }
 
-    // 刪除 投資計畫
+// 刪除 投資計畫
  function delete_plan (plan_id) {
     url_redirect({url:'/delete_plan', method: "post", data: {"plan_id":plan_id}})
 }
@@ -102,4 +102,13 @@ function judge_delete_portfolio_disable(){
     if($("#stock-portfolios>option").length < 2){
         $("#delete_portfolio_btn").addClass('disabled d-none')
     }
+}
+
+// 投資組合 初始設置函數
+function init_portfolio(user_portfolios,portfolio_index){
+    setPortfolio_options(user_portfolios) // 選擇群組-下拉選項
+    getData_by_change_select() // 切換群組 重整至對應表格
+    $("#stock-portfolios").prop("selectedIndex",portfolio_index);// 設置選擇群組
+    setPortfolio_id() // 設置目前選擇群組 ID 到控制項
+    judge_delete_portfolio_disable() // 是否顯示 刪除組合選項
 }

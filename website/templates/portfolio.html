@@ -68,7 +68,8 @@
                 <th>股票代碼</th>
                 <th>名稱</th>
                 <th>成交價</th>
-                <th>漲幅</th>
+                <th>漲跌</th>
+                <th>漲跌幅</th>
                 <th class="text-center"></th>
             </tr>
         </thead>
@@ -142,24 +143,20 @@
 </div>
 
 <script>
-    var user_portfolios = JSON.parse('{{user_portfolios|tojson}}')
-    var p1 = '{{portfolio}}'
-    var portfolio_stock = '{{portfolio|tojson}}' 
-    var portfolio = JSON.parse('{{portfolio|tojson}}')
-    setPortfolio_options(user_portfolios)
-    getData_by_change_select()
-    $("#stock-portfolios").prop("selectedIndex", '{{portfolio_index}}');
-    setPortfolio_id()
-    judge_delete_portfolio_disable()
    $(document).ready(function (){
-       
-       
+        
+        // 接值、初始設置
+        var user_portfolios = JSON.parse('{{user_portfolios|tojson}}')
+        var portfolio_stock = '{{portfolio|tojson}}'
+        var portfolio_index = '{{portfolio_index}}'
+        init_portfolio(user_portfolios, portfolio_index)
 
+        // 投資組合表格
         var target_table = $('#target_table').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
             pageLength: 5,
             ajax:{
-                url:"/get_realtimeData",
+                url:"/get_price_quotechange",
                 type:"POST",
                 data: {portfolio_stock}
             },
@@ -167,24 +164,27 @@
                 {data:"stock_id"},
                 {data:"stock_name"},
                 {data:"price"},
-                {"data":null,"defaultContent":""},
+                {data:"change"},
+                {data:"changePercent"},
                 {data:null,render: function(data){
                     return '<button class="btn btn-outline-del" onclick="delete_stock('+data.stock_id+')">刪除</button>'}
                 }
-                // {"data":null,"defaultContent":"<button>View</button>"}
             ],
             columnDefs: [
                 { className:"text-center", orderable: false, targets:-1 }
-            ]
-            
+            ]  
         });
 
-        setInterval( function () {
-            console.log('refresh')
-            target_table.ajax.reload();
-        }, 5000 );
-        // $("#stockGroup").append(new Option("自選股群組", "1"));
-
+        var date = new Date()
+        current_time = date.getHours()*60 + date.getMinutes()
+        // 判斷是否為開盤時間
+        if ((current_time>540) && (current_time<840)){
+            // 設定API更新區間 (表格)
+            setInterval( function () {
+                console.log('refresh')
+                target_table.ajax.reload();
+            }, 5000 );
+        }
         
     }); 
 </script>

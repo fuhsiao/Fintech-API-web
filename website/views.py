@@ -68,7 +68,6 @@ def Set_account():
     return render_template('account.html', user = current_user)
 
 
-
 # ===================== CRUD methods =====================
 
 # 新增計畫 (Target)
@@ -189,19 +188,32 @@ def mapping_investplanText(plans, options):
         i.planRisk_text = mapping_codeValue(i.plan_risk, options)
     return plans
 
-@views.route('/get_realtimeData',methods=['POST'])
-def get_realtimeData():
+
+# ===================== getData from API =====================
+
+# 取得組合內股票的 成交價、漲跌、漲跌幅 (Portfolio)
+@views.route('/get_price_quotechange',methods=['POST'])
+def get_Price_quoteChange():
     stock = json.loads(dict(request.form)['portfolio_stock'])
-    
     for i in stock:
-        # dealts = api_dealts(i['stock_id'])
-        # i['price'] = dealts['price']
-        i['price'] = randrange(100)
+        a1 = api_dealts(i['stock_id'])
+        a2 = api_quote(i['stock_id'])
+        # set price、change、changePercent
+        i['price'] = a1['price']
+        i['change'] = a2['quote']['change']
+        i['changePercent'] = a2['quote']['changePercent']
+        # i['price'] = randrange(100)
+        # i['change'] = randrange(10)
+        # i['changePercent'] = randrange(100)
     return jsonify({'data':stock})
 
 
+# ===================== API - Digital Sandbox =====================
+
+# api token
 jwt ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMDI0IiwiaWF0IjoxNjU0NjU4MTY1LCJpc3MiOiIydUtBOE8xYU1iUUs2ZFpCT0M0UGpWRnJlOW9NWjM3byJ9.HFYDRUDYXM7kCqRa0iFUJzyNzCsmNHgLrHqHhQc9ybk"
 
+# 最近一筆成交資料 - 價格、張數
 def api_dealts(symbolId):
     url = "https://api.fintechspace.com.tw/realtime/v0.3/intraday/dealts"
     params = {
@@ -212,7 +224,17 @@ def api_dealts(symbolId):
         "offset": 0,
         "jwt": jwt
     }
-
     response = requests.request("GET", url, params = params)
-
     return json.loads(response.text)['data']['dealts'][0]
+
+# 盤中最佳五檔、統計資訊(OHLC)、漲跌(幅)
+def api_quote(symbolId):
+    url = "https://api.fintechspace.com.tw/realtime/v0.3/intraday/quote"
+    params = {
+        "symbolId": symbolId,
+        "apiToken": '4af7c90c0eac7cd5ee3d289f00045bbb',
+        "oddLot": 'false',
+        "jwt": jwt
+    }
+    response = requests.request("GET", url, params = params)
+    return json.loads(response.text)['data']

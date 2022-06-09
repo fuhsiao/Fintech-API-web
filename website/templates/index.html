@@ -6,4 +6,154 @@
         <p class="small mb-0 text-white-50">Good luck with your work today !</p>
     </div>
 </header>
+<div class="container-fluid px-4">
+    <div class="card shadow-sm mb-4" style="width: max-content">   
+        <div class="card-body">
+            <form method="POST" action="/">
+                <div class="text-darkgray row">
+                    <div class="col-7 col-md-auto">
+                        <input type="number" class="form-control" name="stock_Id" placeholder="請輸入股票代碼" required>
+                    </div>
+                    <div class="col-5 col-md-auto">
+                        <button type="submit" class="btn btn-bg "><i class="fa-solid fa-magnifying-glass"></i><span> 搜尋</span><span class="d-none d-md-inline">個股資訊</span></button>
+                    </div> 
+                </div>                        
+            </form> 
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-md-12">
+            <div class="card shadow-sm mb-3" >
+                <div class="card-body">
+                  <h3 class="card-title">台積電</h3>
+                  <p class="text-muted">6 月 9 日 下午 01:16:10 [ UTC+8 ]</p>
+                  <canvas class="w-100" id="myAreaChart"></canvas>  
+                </div>
+            </div>      
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="card shadow-sm mt-md-0 mt-2">
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">股票代號</li>
+                        <li class="list-group-item">產業類別</li>
+                        <li class="list-group-item">當日股價範圍</li>
+                      </ul>
+                </div>
+            </div>
+            <div class="card shadow-sm mt-4 mb-4">
+                <div class="card-body">
+                    <div class="progress mb-3">
+                        <div class="progress-bar"
+                            style="width: 48%; background-color: #359936">
+                            買 48%
+                        </div>
+                        <div class="progress-bar progress-bar-stripped"
+                            style="width: 52%; background-color: #d13535">
+                            賣 52%
+                        </div>
+                    </div>
+                    <table id="bid_ask_table" class="table table-bordered w-100" >
+                        <thead class="bg-th">
+                            <tr>
+                                <th class="text-center">張數</th>
+                                <th class="text-center">價格</th>
+                                <th class="text-center">價格</th>
+                                <th class="text-center">張數</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename = 'js/Chart.min.js') }}"></script>
+<script>
+    var datas = [{'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
+    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
+    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
+    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
+    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100}]
+    var target_table = $('#bid_ask_table').DataTable({
+            dom:'t',
+            // ajax:{
+            //     url:"/",
+            //     type:"POST",
+            //     data: {}
+            // },
+            paging: false,
+            ordering: false,
+            
+            // info:false,
+            data:datas
+            ,
+            columns:[
+                {data:"bid_unit"},
+                {data:"bid_price"},
+                {data:"ask_price"},
+                {data:"ask_unit"},
+            ]
+            
+        });
+
+    var ctx = document.getElementById("myAreaChart");
+    var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ["Mar 1", "Mar 2", "Mar 3", "Mar 4", "Mar 5", "Mar 6", "Mar 7", "Mar 8", "Mar 9", "Mar 10", "Mar 11", "Mar 12", "Mar 13"],
+    datasets: [{
+      label: "Sessions",
+      lineTension: 0.3,
+      backgroundColor: "rgba(2,117,216,0.2)",
+      borderColor: "rgba(2,117,216,1)",
+      pointRadius: 5,
+      pointBackgroundColor: "rgba(2,117,216,1)",
+      pointBorderColor: "rgba(255,255,255,0.8)",
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: "rgba(2,117,216,1)",
+      pointHitRadius: 50,
+      pointBorderWidth: 2,
+      data: [10000, 30162, 26263, 18394, 18287, 28682, 31274, 33259, 25849, 24159, 32651, 31984, 38451],
+    }],
+  },
+  options: {
+    scales: {
+      xAxes: [{
+        time: {
+          unit: 'date'
+        },
+        gridLines: {
+          display: false
+        },
+        ticks: {
+          maxTicksLimit: 7
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          min: 0,
+          max: 40000,
+          maxTicksLimit: 5
+        },
+        gridLines: {
+          color: "rgba(0, 0, 0, .125)",
+        }
+      }],
+    },
+    legend: {
+      display: false
+    }
+  }
+});
+
+
+
+
+</script>
 {% endblock %}
