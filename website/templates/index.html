@@ -9,10 +9,10 @@
 <div class="container-fluid px-4">
     <div class="card shadow-sm mb-4" style="width: max-content">   
         <div class="card-body">
-            <form method="POST" action="/">
+            <form method="POST" action="/index">
                 <div class="text-darkgray row">
                     <div class="col-7 col-md-auto">
-                        <input type="number" class="form-control" name="stock_Id" placeholder="請輸入股票代碼" required>
+                        <input type="number" class="form-control" name="stock_id" placeholder="請輸入股票代碼" required>
                     </div>
                     <div class="col-5 col-md-auto">
                         <button type="submit" class="btn btn-bg "><i class="fa-solid fa-magnifying-glass"></i><span> 搜尋</span><span class="d-none d-md-inline">個股資訊</span></button>
@@ -21,11 +21,11 @@
             </form> 
         </div>
     </div>
-    <div class="row">
+    <div class="row d-none" id="search_result_panel">
         <div class="col-lg-8 col-md-12">
             <div class="card shadow-sm mb-3" >
                 <div class="card-body">
-                  <h3 class="card-title">台積電</h3>
+                  <h3 class="card-title">{{stock_info['nameZhTw']}}</h3>
                   <p class="text-muted">6 月 9 日 下午 01:16:10 [ UTC+8 ]</p>
                   <canvas class="w-100" id="myAreaChart"></canvas>  
                 </div>
@@ -35,9 +35,8 @@
             <div class="card shadow-sm mt-md-0 mt-2">
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">股票代號</li>
-                        <li class="list-group-item">產業類別</li>
-                        <li class="list-group-item">當日股價範圍</li>
+                        <li class="list-group-item">股票代號<span class="float-end">{{stock_info['stock_id']}}</span></li>
+                        <li class="list-group-item">產業類別<span class="float-end">{{stock_info['industryZhTw']}}</span></li>
                       </ul>
                 </div>
             </div>
@@ -45,12 +44,12 @@
                 <div class="card-body">
                     <div class="progress mb-3">
                         <div class="progress-bar"
-                            style="width: 48%; background-color: #359936">
-                            買 48%
+                            id="bids_bar"
+                            style="width: 50%; background-color: #359936">         
                         </div>
                         <div class="progress-bar progress-bar-stripped"
-                            style="width: 52%; background-color: #d13535">
-                            賣 52%
+                            id="asks_bar"
+                            style="width: 50%; background-color: #d13535">                          
                         </div>
                     </div>
                     <table id="bid_ask_table" class="table table-bordered w-100" >
@@ -75,82 +74,114 @@
 
 <script src="{{ url_for('static', filename = 'js/Chart.min.js') }}"></script>
 <script>
-    var datas = [{'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
-    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
-    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
-    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100},
-    {'bid_unit':120,'bid_price':12,'ask_price':13,'ask_unit':100}]
-    var target_table = $('#bid_ask_table').DataTable({
-            dom:'t',
-            // ajax:{
-            //     url:"/",
-            //     type:"POST",
-            //     data: {}
-            // },
-            paging: false,
-            ordering: false,
-            
-            // info:false,
-            data:datas
-            ,
-            columns:[
-                {data:"bid_unit"},
-                {data:"bid_price"},
-                {data:"ask_price"},
-                {data:"ask_unit"},
-            ]
-            
-        });
 
-    var ctx = document.getElementById("myAreaChart");
-    var myLineChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ["Mar 1", "Mar 2", "Mar 3", "Mar 4", "Mar 5", "Mar 6", "Mar 7", "Mar 8", "Mar 9", "Mar 10", "Mar 11", "Mar 12", "Mar 13"],
-    datasets: [{
-      label: "Sessions",
-      lineTension: 0.3,
-      backgroundColor: "rgba(2,117,216,0.2)",
-      borderColor: "rgba(2,117,216,1)",
-      pointRadius: 5,
-      pointBackgroundColor: "rgba(2,117,216,1)",
-      pointBorderColor: "rgba(255,255,255,0.8)",
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: "rgba(2,117,216,1)",
-      pointHitRadius: 50,
-      pointBorderWidth: 2,
-      data: [10000, 30162, 26263, 18394, 18287, 28682, 31274, 33259, 25849, 24159, 32651, 31984, 38451],
-    }],
-  },
-  options: {
-    scales: {
-      xAxes: [{
-        time: {
-          unit: 'date'
-        },
-        gridLines: {
-          display: false
-        },
-        ticks: {
-          maxTicksLimit: 7
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          min: 0,
-          max: 40000,
-          maxTicksLimit: 5
-        },
-        gridLines: {
-          color: "rgba(0, 0, 0, .125)",
-        }
-      }],
-    },
-    legend: {
-      display: false
+    var search_stock = '{{stock_info["stock_id"]}}'
+    if (search_stock!=''){
+      $("#search_result_panel").removeClass("d-none")
+      var bid_ask_table = init_bid_ask_table(search_stock)
+      reload_api_data(bid_ask_table)
     }
-  }
-});
+
+    // 初始化最佳五檔表格
+    function init_bid_ask_table(stock_id){
+      var bid_ask_table = $('#bid_ask_table').DataTable({
+          dom:'t',
+          ajax:{
+            url:"/get_best_bid_ask",
+            type:"POST",
+            data: {'stock_id':stock_id},
+            dataSrc: function(json){
+              json = json.data
+              ask_unit = 0
+              bid_unit = 0
+              $.each(json,function(index) {
+                ask_unit+=json[index]['ask_unit'];
+                bid_unit+=json[index]['bid_unit']
+              })
+              all_unit = ask_unit + bid_unit
+              ask_percentage = Math.round(ask_unit/all_unit*100)
+              bid_percentage = Math.round(bid_unit/all_unit*100)
+              $("#bids_bar").css("width",bid_percentage+"%")
+              $("#asks_bar").css("width",ask_percentage+"%")
+              $("#bids_bar").text(bid_percentage+"%")
+              $("#asks_bar").text(ask_percentage+"%")
+              return json
+            }
+          },
+          paging: false,
+          ordering: false,
+          columns:[
+            {data:"bid_unit"},
+            {data:"bid_price"},
+            {data:"ask_price"},
+            {data:"ask_unit"},
+          ]   
+      });
+      return bid_ask_table
+    }
+    // 取得即時 API資料
+    function reload_api_data(table){
+      var date = new Date()
+        current_time = date.getHours()*60 + date.getMinutes()
+        // 判斷是否為開盤時間
+        if ((current_time>540) && (current_time<840)){
+            // 設定API更新區間 (表格)
+            setInterval( function () {
+                console.log('refresh')
+                table.ajax.reload();
+            }, 5000 );
+        }
+    }
+    
+//     var ctx = document.getElementById("myAreaChart");
+//     var myLineChart = new Chart(ctx, {
+//   type: 'line',
+//   data: {
+//     labels: ["Mar 1", "Mar 2", "Mar 3", "Mar 4", "Mar 5", "Mar 6", "Mar 7", "Mar 8", "Mar 9", "Mar 10", "Mar 11", "Mar 12", "Mar 13"],
+//     datasets: [{
+//       label: "Sessions",
+//       lineTension: 0.3,
+//       backgroundColor: "rgba(2,117,216,0.2)",
+//       borderColor: "rgba(2,117,216,1)",
+//       pointRadius: 5,
+//       pointBackgroundColor: "rgba(2,117,216,1)",
+//       pointBorderColor: "rgba(255,255,255,0.8)",
+//       pointHoverRadius: 5,
+//       pointHoverBackgroundColor: "rgba(2,117,216,1)",
+//       pointHitRadius: 50,
+//       pointBorderWidth: 2,
+//       data: [10000, 30162, 26263, 18394, 18287, 28682, 31274, 33259, 25849, 24159, 32651, 31984, 38451],
+//     }],
+//   },
+//   options: {
+//     scales: {
+//       xAxes: [{
+//         time: {
+//           unit: 'date'
+//         },
+//         gridLines: {
+//           display: false
+//         },
+//         ticks: {
+//           maxTicksLimit: 7
+//         }
+//       }],
+//       yAxes: [{
+//         ticks: {
+//           min: 0,
+//           max: 40000,
+//           maxTicksLimit: 5
+//         },
+//         gridLines: {
+//           color: "rgba(0, 0, 0, .125)",
+//         }
+//       }],
+//     },
+//     legend: {
+//       display: false
+//     }
+//   }
+// });
 
 
 

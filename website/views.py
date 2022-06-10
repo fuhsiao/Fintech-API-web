@@ -1,7 +1,6 @@
-from email.policy import default
+import re
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from mysqlx import PoolError
 from .models import Mapping_code, Invest_plan, Portfolios, Stocks
 from . import db
 import requests
@@ -14,11 +13,18 @@ views = Blueprint('views',__name__)
 # ===================== Frontend page =====================
 
 # 主頁-儀表板
-@views.route('/index')
+@views.route('/index',methods= ['GET','POST'])
 @login_required
 def Index():
-    print(current_user.id)
-    return render_template("index.html", user = current_user)
+    stock_info = ""
+    if request.method == 'POST':
+        stock_id = request.form.get('stock_id')
+        meta = api_meta(stock_id)
+        if meta !=0:
+            stock_info = {  "nameZhTw":meta['meta']['nameZhTw'], 
+                            "industryZhTw":meta['meta']['industryZhTw'],
+                            "stock_id":meta['info']['symbolId']}
+    return render_template("index.html", user = current_user, stock_info = stock_info)
 
 # 投資取向
 @views.route('/target', methods=['GET','POST'])
@@ -200,14 +206,28 @@ def get_Price_quoteChange():
         a2 = api_quote(i['stock_id'])
         # set price、change、changePercent
         i['price'] = a1['price']
-        i['change'] = a2['quote']['change']
-        i['changePercent'] = a2['quote']['changePercent']
+        i['change'] = a2['change']
+        i['changePercent'] = a2['changePercent']
         # i['price'] = randrange(100)
         # i['change'] = randrange(10)
         # i['changePercent'] = randrange(100)
     return jsonify({'data':stock})
 
+@views.route('/get_best_bid_ask',methods = ['POST'])
+def get_Best_Bid_Ask():
+    stock_id = json.loads(dict(request.form)['stock_id'])
+    a1 = api_quote(stock_id)['order']
+    bids = a1['bids']
+    asks = a1['asks']
+    result = []
+    for i in range(5):
+        result.append( {"bid_unit":bids[i]["volume"],
+                        "bid_price":bids[i]["price"],
+                        "ask_price":asks[i]["price"],
+                        "ask_unit":asks[i]["volume"]})
 
+    print(result)
+    return jsonify({'data':result})
 # ===================== API - Digital Sandbox =====================
 
 # api token
@@ -237,4 +257,20 @@ def api_quote(symbolId):
         "jwt": jwt
     }
     response = requests.request("GET", url, params = params)
+    return json.loads(response.text)['data']['quote']
+
+# 提供 股票基本資訊
+def api_meta(symbolId):
+    url = "https://api.fintechspace.com.tw/realtime/v0.3/intraday/meta"
+    params = {
+        "symbolId": symbolId,
+        "apiToken": '4af7c90c0eac7cd5ee3d289f00045bbb',
+        "oddLot": 'false',
+        "jwt": jwt
+    }
+    response = requests.request("GET", url, params = params)
+    print(response)
+    print(symbolId)
+    if response.status_code!=200:
+        return 0
     return json.loads(response.text)['data']

@@ -80,7 +80,6 @@ function getData_by_change_select(){
         id = $("#stock-portfolios").val();
         selectedIndex = $("#stock-portfolios").prop('selectedIndex')
         console.log(selectedIndex)
-        debugger
         url_redirect({url:'/portfolio_index_router', method: "post",data: {"index":selectedIndex}});
       });
 }
