@@ -67,7 +67,102 @@
                 </div>
             </div> 
         </div>
-
+    </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-darkgray fw-bold mb-3">近日熱門股</h5>
+            <hr class="my-3" style="opacity: 0.2;"> 
+            <table id="target_table" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
+                <thead class="bg-th">
+                    <tr>
+                        <th>股票名稱(代碼)</th>
+                        <th>價格</th>
+                        <th>漲跌</th>
+                        <th>漲跌幅(%)</th>
+                        <th>開盤</th>
+                        <th>昨收</th>
+                        <th>最高</th>
+                        <th>最低</th>
+                        <th>成交量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <ul class="nav nav-pills mb-1" id="pills-tab">
+                        <li class="nav-item">
+                          <button class="nav-link active" id="pills-tab-1" data-bs-toggle="pill" data-bs-target="#tab1" type="button">投資組合現況</button>
+                        </li>
+                        <li class="nav-item">
+                          <button class="nav-link" id="pills-tab-2" data-bs-toggle="pill" data-bs-target="#tab2" type="button">投資表現</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="pills-tab-3" data-bs-toggle="pill" data-bs-target="#tab3" type="button">風險評估</button>
+                        </li>
+                    </ul>
+                    <hr class="my-3" style="opacity: 0.2;">
+                    <div class="tab-content"  id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="tab1">
+                            <h4 class="card-title">$1,370,420.00</h4>
+                            <table class="table table-borderless">                                
+                                <tbody>
+                                  <tr>
+                                    <th scope="row">持有現金</th>
+                                    <td>$420,000</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" class="text-muted">Day Gain</th>
+                                    <td class="text-success">0.00 (+0.00%)</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row" class="text-muted">Total Gain</th>
+                                    <td class="text-danger">12,345.67 (+15.67%)</td>
+                                  </tr>
+                                </tbody>
+                            </table>                        
+                        </div>    
+                        <div class="tab-pane fade" id="tab2">                            
+                        </div>  
+                        <div class="tab-pane fade" id="tab3">                            
+                        </div>                  
+                    </div>
+                </div>
+            </div>        
+        </div>    
+        <div class="col-md-6 col-sm-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-darkgray fw-bold">最新消息</h5>
+                    <hr class="my-3" style="opacity: 0.2;">  
+                    <table class="table table-hover">            
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>News 1</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">2</th>
+                            <td>News 2</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">3</th>
+                            <td>News 3</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">4</th>
+                            <td>News 4</td>
+                          </tr>
+                        </tbody>
+                      </table>    
+                </div>
+            </div>
+        </div>    
     </div>
 </div>
 
@@ -143,6 +238,34 @@
             })
         return price
     }
+
+    $(document).ready(function (){
+        var Data = [
+            {"stock":"台積電 (2330)","price":"530", "up-down":"-11", "fluctuation":"-2.03%", 
+            "open":"530", "close":"541", "highest":"533", "lowest":"529", "volume":"21,319"},
+            {"stock":"陽明 (2609)","price":"126", "up-down":"-0.50", "fluctuation":"-0.40%", 
+            "open":"127", "close":"126.5", "highest":"127", "lowest":"124.5", "volume":"45,105"}
+         ];
+ 
+         $('#target_table').DataTable({
+             dom:'t<"mt-sm-3 mb-sm-3"p>',
+             pageLength: 5,
+             data:Data,
+             columns:[
+                 {data:"stock"},
+                 {data:"price"},
+                 {data:"up-down"},
+                 {data:"fluctuation"},
+                 {data:"open"},
+                 {data:"close"},
+                 {data:"highest"},
+                 {data:"lowest"},
+                 {data:"volume"}
+                 
+             ]
+             
+         });
+    }); 
 
 
     function init_stockChart(price){
