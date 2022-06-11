@@ -225,9 +225,14 @@ def get_Best_Bid_Ask():
                         "bid_price":bids[i]["price"],
                         "ask_price":asks[i]["price"],
                         "ask_unit":asks[i]["volume"]})
-
-    print(result)
     return jsonify({'data':result})
+
+@views.route('/get_close_price',methods = ['POST'])
+def get_Close_Price():
+    stock_id = json.loads(dict(request.form)['stock_id'])
+    a1 = api_chart(stock_id)
+    return jsonify(a1)
+
 # ===================== API - Digital Sandbox =====================
 
 # api token
@@ -269,8 +274,18 @@ def api_meta(symbolId):
         "jwt": jwt
     }
     response = requests.request("GET", url, params = params)
-    print(response)
-    print(symbolId)
     if response.status_code!=200:
         return 0
     return json.loads(response.text)['data']
+
+# 取得股票收盤價 圖資料
+def api_chart(symbolId):
+    url = "https://api.fintechspace.com.tw/realtime/v0.3/intraday/chart"
+    params = {
+        "symbolId": symbolId,
+        "apiToken": '4af7c90c0eac7cd5ee3d289f00045bbb',
+        "oddLot": 'false',
+        "jwt": jwt
+    }
+    response = requests.request("GET", url, params = params)
+    return json.loads(response.text)['data']['chart']['c']
