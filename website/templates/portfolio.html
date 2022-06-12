@@ -44,7 +44,7 @@
             <div class="float-end">
                 <div class="card shadow-sm mb-4 col-auto ">   
                     <div class="card-body">
-                        <form method="POST" action="/add_stock_by_id">
+                        <form method="POST" action="/add_stock_by_id" autocomplete="off">
                             <div class="text-darkgray row">
                                 <div class="col-auto">
                                     <input type="hidden" class="form-control" name="index" id = "addstock_portfolio_index">
@@ -108,7 +108,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="/edit_portfolio_name" class="row">
+            <form method="POST" action="/edit_portfolio_name" class="row" autocomplete="off">
                 <div class="col-8 mb-2">
                     <input type="hidden" class="form-control" name="index" id = "rename_portfolio_index">
                     <input type="hidden" class="form-control" name="portfolio_id" id = "selected_portfolio_id_to_rename">
