@@ -167,8 +167,11 @@
 </div>
 
 
-<script src="{{ url_for('static', filename = 'js/chart.js') }}"></script>
-<script src="{{ url_for('static', filename = 'js/chartjs-adapter-date-fns.bundle.min.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename = 'js/chart.js') }}"></script>
+<script src="{{ url_for('static', filename = 'js/chartjs-adapter-date-fns.bundle.min.js') }}"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
 <script>
 
     // 初始化最佳五檔表格
@@ -361,7 +364,7 @@
         //   var close_price = get_close_price(search_stock)
         //   console.log(close_price)
         var close_price = get_close_price(search_stock)
-        setTimeout(function() {init_stockChart(close_price)},2000)
+        $.when(close_price).then(init_stockChart(close_price))
         
 
         }
