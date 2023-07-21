@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>創智投資專家 - Stock Advisor</title>
+    <title>創智投資分析 - Stock Advisor</title>
     <!-- CSS -->
     <link href="{{ url_for('static', filename = 'css/styles.css') }}" rel = "stylesheet" />
     <link href="{{ url_for('static', filename = 'css/dataTables.bootstrap5.min.css') }}" rel = "stylesheet" />
@@ -18,6 +18,7 @@
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
     <!-- icon CDN -->
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    
 </head>
 
 <body class="sb-nav-fixed">
@@ -26,7 +27,7 @@
         <a class="navbar-brand ps-3" href="/index">
             <i class="fa-solid fa-layer-group"></i>
             <span class="ps-1">創智</span>
-            <span class="small" style="color:#c1c1c1;">投資</span>
+            <span class="small" style="color:#c1c1c1;">分析</span>
         </a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
@@ -46,21 +47,31 @@
             <nav class="sb-sidenav accordion sb-sidenav-light shadow-right" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Menu</div>
+                        <!-- <div class="sb-sidenav-menu-heading">Menu</div> -->
+                        
+                        <div class="sb-sidenav-menu-heading">Tools</div>
                         <a class="nav-link" href="/index">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-gauge-simple-high"></i></div>
-                            儀表板
+                            最新消息
                         </a>
-                        <div class="sb-sidenav-menu-heading">Tools</div>
+                        <a class="nav-link" href="/stock">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                            個股搜尋
+                        </a>
                         <a class="nav-link" href="/target">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-bullseye"></i></div>
                             投資取向
+                        </a>
+                        <a class="nav-link" href="/picker-oneself">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-simple"></i></div>
+                            選股推薦
                         </a>
                         <a class="nav-link" href="/portfolio">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                             投資組合
                         </a>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                        
+                        <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-chart-simple"></i></div>
                             智能選股
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -70,11 +81,11 @@
                                 <a class="nav-link" href="/picker-oneself">個人推薦</a>
                                 <a class="nav-link" href="/picker-cond">自訂條件</a>
                             </nav>
-                        </div>
-                        <a class="nav-link" href="/risk-assessment">
+                        </div> -->
+                        <!-- <a class="nav-link" href="/risk-assessment">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-chart-pie"></i></div>
                             風險評估
-                        </a>
+                        </a> -->
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">

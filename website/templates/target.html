@@ -9,12 +9,12 @@
 <div class="container-fluid px-4">
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h5 class="card-title text-darkgray fw-bold mb-3">設置您的 投資計畫</h5>
+            <h5 class="card-title text-darkgray fw-bold mb-3">設置您的 投資類型</h5>
             <form method="POST" action="add_newPlan" autocomplete="off">
                 <div class="row text-darkgray align-items-end">
                     <div class="col-md-2">
-                        <label class="my-2">計畫名稱</label>
-                        <input type="text" class="form-control" name="new_planName" placeholder="投資計畫名稱" maxlength="25" required>
+                        <label class="my-2">投資取向</label>
+                        <input type="text" class="form-control" name="new_planName" placeholder="" maxlength="25" required>
                     </div>
                     <div class="col-md-2">
                         <label class="my-2">預計每月投入</label>
@@ -35,7 +35,7 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <button type="submit" class="btn btn-bg mt-3">新增計畫</button>       
+                        <button type="submit" class="btn btn-bg mt-3">新增</button>       
                     </div>                   
                 </div>
             </form>
@@ -44,7 +44,7 @@
     <table id="target_table" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
         <thead class="bg-th">
             <tr>
-                <th>投資計畫</th>
+                <th>投資取向</th>
                 <th>預計每月投入</th>
                 <th>預計投資時程</th>
                 <th>投資風險屬性</th>

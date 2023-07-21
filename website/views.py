@@ -1,30 +1,98 @@
 import re
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from .models import Mapping_code, Invest_plan, Portfolios, Stocks
+from .models import Mapping_code, Invest_plan, Portfolios, Stocks, News
 from . import db
 import requests
 import json
 from random import randrange
+from datetime import datetime, timedelta
+from datetime import date as Datetime_date
+from bs4 import BeautifulSoup
+import time
+import jieba
+from sqlalchemy import and_, or_
+
 
 views = Blueprint('views',__name__)
 
 
 # ===================== Frontend page =====================
 
-# 主頁-儀表板
+# 最新消息
 @views.route('/index',methods= ['GET','POST'])
 @login_required
 def Index():
+    now = datetime.now()
+    timestamp = int(datetime.timestamp(now))
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36"}
+    res = requests.get('https://www.twse.com.tw/fund/BFI82U?response=json&dayDate=&weekDate=&monthDate=&type=day&_='+str(timestamp),headers=headers)
+    # soup = BeautifulSoup(res.text,"html.parser")
+    json_object = res.json()
+    time.sleep(1)
+    res2 = requests.get('https://www.twse.com.tw/exchangeReport/MI_MARGN?response=json&date=&selectType=&_='+str(timestamp),headers=headers)
+    # soup2 = BeautifulSoup(res2.text,"html.parser")
+    json_object2 = res2.json()
+    
+
+    return render_template("index.html", user = current_user, data = json_object, data2 = json_object2)
+
+
+# 個股搜尋
+@views.route('/stock',methods= ['GET','POST'])
+@login_required
+def Stock():
     stock_info = ""
+    news_json = {"title":[],"link":[]}
+    senti_object = {"sneutral":0,"spos":0,"sneg":0}
     if request.method == 'POST':
         stock_id = request.form.get('stock_id')
         meta = api_meta(stock_id)
         if meta !=0:
             stock_info = {  "nameZhTw":meta['meta']['nameZhTw'], 
                             "industryZhTw":meta['meta']['industryZhTw'],
-                            "stock_id":meta['info']['symbolId']}
-    return render_template("index.html", user = current_user, stock_info = stock_info)
+                            "stock_id":meta['info']['symbolId'],
+                            "stock_date":meta['info']['date'],
+                            "priceHighLimit":meta['meta']['priceHighLimit'],
+                            "priceLowLimit":meta['meta']['priceLowLimit']}
+            
+            res = requests.get('https://tw.stock.yahoo.com/quote/'+ str(stock_id)+'/news')
+            
+            # 爬個股新聞
+            soup = BeautifulSoup(res.text,"html.parser")
+            newsBox = soup.find_all('u', class_="StretchedBox")
+            news = [x.find_parent("a") for x in newsBox]
+            news_json = {"title":[],"link":[]}
+            for i in news:
+                news_json["title"].append(i.text)
+                news_json["link"].append(i['href'])
+            
+            link = news_json["link"]
+            result = News.query.filter_by(stockid=stock_id).all()
+
+            rl = [x.url for x in result]
+
+            for l in link:
+                if l not in rl:
+                    newsdate , content = get_news(l)
+                    sentiScore = get_sentiScore(content)
+                    news = News(url=l,date=datetime(int(newsdate[0]),int(newsdate[1]),int(newsdate[2]),0,0,0,0), senti= sentiScore,stockid = stock_id)
+                    db.session.add(news)
+                    db.session.commit()
+            
+            filterdate = Datetime_date.today() - timedelta(7)
+            result2 = News.query.filter(and_(News.date >= filterdate,News.stockid ==stock_id)).all()
+            sneutral = [ x.senti for x in result2 if x.senti == 0]
+            spos = [ x.senti for x in result2 if x.senti == 1]
+            sneg = [ x.senti for x in result2 if x.senti == -1]
+
+            senti_object["sneutral"]=len(sneutral)
+            senti_object["spos"]=len(spos)
+            senti_object["sneg"]=len(sneg)
+            
+
+
+    return render_template("stock.html", user = current_user, stock_info = stock_info, news = news_json,senti= senti_object, zip =zip)
 
 # 投資取向
 @views.route('/target', methods=['GET','POST'])
@@ -53,19 +121,21 @@ def Portfolio(index):
 @views.route('/picker-oneself')
 @login_required
 def Picker1():
-    return render_template('picker-oneself.html', user = current_user)
+    user_plans = list(map(lambda Invest_plan:Invest_plan.serialize(Invest_plan.id),current_user.investplan))
+    user_portfolios = list(map(lambda Portfolios:Portfolios.serialize(Portfolios.id),current_user.portfolios))
+    return render_template('picker-oneself.html', user = current_user,  user_plans = user_plans, portfolio = user_portfolios)
 
 # 選股-自訂條件
-@views.route('/picker-cond')
-@login_required
-def Picker2():
-    return render_template('picker-cond.html', user = current_user)
+# @views.route('/picker-cond')
+# @login_required
+# def Picker2():
+#     return render_template('picker-cond.html', user = current_user)
 
 # 風險評估
-@views.route('/risk-assessment')
-@login_required
-def Risk_assess():
-    return render_template('risk-assessment.html', user = current_user)
+# @views.route('/risk-assessment')
+# @login_required
+# def Risk_assess():
+#     return render_template('risk-assessment.html', user = current_user)
 
 # 個人資料
 @views.route('/account')
@@ -289,3 +359,88 @@ def api_chart(symbolId):
     }
     response = requests.request("GET", url, params = params)
     return json.loads(response.text)['data']['chart']['c']
+
+
+def get_news(url):
+
+    res = requests.get(url)
+    soup = BeautifulSoup(res.text,"html.parser")
+
+    time = soup.find("div",class_="caas-attr-time-style").find("time").text
+    date = re.findall(r'\d+',time.split()[0])
+
+
+    p = soup.find("div",class_="caas-body").find_all("p",text=True, recursive=False)
+
+    content = ' '.join([i.text for i in p])
+
+    return date ,content
+
+
+def get_sentiScore(text):
+
+    with open('website/dict/NTUSD_positive_unicode.txt', encoding='utf-8', mode='r') as f:
+        positive_words = []
+        for l in f:
+            positive_words.append(l.strip())
+    
+    with open('website/dict/NTUSD_negative_unicode.txt', encoding='utf-8', mode='r') as f:
+        negative_words = []
+        for l in f:
+            negative_words.append(l.strip())
+
+
+    article = text
+    score = 0
+    jieba_result = jieba.cut(article, cut_all=False, HMM=True)
+    for word in jieba_result:
+        if word in positive_words:
+            score += 1
+        elif word in negative_words:
+            score -= 1
+        else:
+            pass
+    
+    senti = 0
+    if score > 3:
+        senti = 1
+    if score <0:
+        senti = -1
+    
+    return senti
+        
+@views.route('/picker1_stock',methods=['POST'])
+def picker_stock():
+    stock = json.loads(dict(request.form)['type'])
+    stock = str(stock)
+    money_type = ['1']
+
+    if '2' in stock:
+        money_type.append('2')
+    if '3' in stock:
+        money_type.append('3')
+
+    user_portfolios = list(map(lambda Portfolios:Portfolios.serialize(Portfolios.id),current_user.portfolios))
+    result2 = Stocks.query.filter(and_(Stocks.t1.in_(money_type),Stocks.t3 == stock[-1])).all()
+    
+    t = []
+    for i in result2:
+        t.append({"stock_id":i.id,
+                  "stock_name":i.name})
+
+    return jsonify({"data":t})
+    
+
+    # 新增股票 從推薦
+@views.route('/add_stock_picker', methods=['POST'])
+def add_stock_pciker():
+    if request.method == 'POST':
+        stock_id = request.form.get('stockId')
+        stock = Stocks.query.get(stock_id)
+        portfolio_id = request.form.get('portfolio_id')
+        this_portfolio = Portfolios.query.get(portfolio_id)
+        if stock and (stock not in this_portfolio.selected_stocks): 
+            this_portfolio.selected_stocks.append(stock)
+            db.session.commit()
+    return redirect(url_for('views.Picker1'))
+ 

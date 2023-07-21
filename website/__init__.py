@@ -8,7 +8,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'FujevGaQpliOnCRxz'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://413user:*0847EED5C4s@140.123.174.208:3306/fintech_web'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@localhost:3306/fintech_web'
     db.init_app(app)
 
     from .views import views

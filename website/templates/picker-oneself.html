@@ -2,12 +2,34 @@
 {% block content %}
 <header class="py-10 mb-4 bg-gradient-primary-to-secondary">
     <div class="container-xl px-4 py-4">
-        <span class="h1 text-white">智能選股</span>
-        <span class="h5 text-white ps-1">/ 個人推薦</span>
+        <span class="h1 text-white">選股推薦</span>
         <p class="small mb-0 mt-1 text-white-50">Stock picking by your investment style</p>
     </div>
 </header>
 
+  <!-- Modal 新增群組-->
+  <div class="modal fade" id="track_panel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">選擇群組</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="/add_stock_picker" class="row">
+                <div class="col-8 mb-2">
+                    <input id="add_this_stockid" name="stockId" type="hidden" >
+                    <select name="portfolio_id" id="portfolio_select" class="form-control">
+                    </select>
+                </div>
+                <div class="col-4">
+                    <button type="submit" class="btn btn-bg">新增</button>
+                </div>
+            </form>
+        </div>      
+      </div>
+    </div>
+</div>
 <div class="container-fluid px-4">
     <div class="d-flex">
         <div class="card shadow-sm mb-4 col-auto ">   
@@ -15,14 +37,14 @@
                 <form >
                     <div class="text-darkgray row">
                         <div class="col-auto">
-                            <label class="col-form-label fw-bold">投資計畫</label>
+                            <label class="col-form-label fw-bold">投資取向</label>
                         </div>       
                         <div class="col-auto">
                             <select id="investPlan" class="form-control">
                             </select>
                         </div>
                         <div class="col-auto">
-                            <label class="col-form-label fw-bold me-2">推薦</label>
+                            <label class="col-form-label fw-bold me-2"></label>
                         </div>     
                     </div>
                 </form>
@@ -33,10 +55,10 @@
     <table id="picker_table1" class="table table-bordered shadow-sm w-100" style="vertical-align:middle">
         <thead class="bg-th">
             <tr>
-                <th>股票代碼</th>
+                <th width="20%">股票代碼</th>
                 <th>名稱</th>
-                <th>最新收盤價</th>
-                <th>漲幅</th>
+                <!-- <th>最新收盤價</th>
+                <th>漲幅</th> -->
                 <th class="text-center" style="width: 20%;">追蹤個股</th>
             </tr>
         </thead>
@@ -46,22 +68,51 @@
 </div>
 
 <script>
-    $(document).ready(function (){
-        var Data = [
-            {"stockID":"2330","stockName":"台積電", "closePrices":"514", "stockGain":"+16"}
-        ];
+    var user_plans = JSON.parse('{{user_plans|tojson}}')
 
-        $('#picker_table1').DataTable({
+    function setPortfolio_options(options){
+        $.each(options,function(index,value){
+
+            type = value.monInvest.toString()+value.planTime.toString()+value.planRisk.toString()
+            $("#investPlan").append(new Option(value.planName,type));
+        });
+    }
+
+    function set_select_stock(t){
+            $("#add_this_stockid").val(t)
+        }
+
+    $(document).ready(function (){
+
+        
+
+
+        setPortfolio_options(user_plans)
+
+        // var filterType = $("#investPlan option:selected").val()
+
+        var table = $('#picker_table1').DataTable({
             dom:'t<"mt-sm-3 mb-sm-3"p>',
             pageLength: 5,
-            data:Data,
+            ajax:{
+                url:"/picker1_stock",
+                type:"POST",
+                data: function ( d ) {
+                   d.type = $("#investPlan option:selected").val()},
+            
+                dataSrc: function(json){
+                    json = json.data
+                    return json
+                }
+            },
             columns:[
-                {data:"stockID"},
-                {data:"stockName"},
-                {data:"closePrices"},
-                {data:"stockGain"},
-                {render: function(){
-                    return '<button class="btn btn-sm btn-outline-bg">加入</button>'}
+                {data:"stock_id"},
+                {data:"stock_name"},
+                // {data:"closePrices"},
+                // {data:"stockGain"},
+                {data:null,render: function(data){
+                    return '<button class="btn btn-sm btn-outline-bg" data-bs-toggle="modal" data-bs-target="#track_panel" onclick="set_select_stock(' + data.stock_id + ')">加入</button>'
+                    }
                 }
                 // {"data":null,"defaultContent":"<button>View</button>"}
             ],
@@ -71,9 +122,28 @@
             
         });
 
-         $("#investPlan").append(new Option("PlanB", "1"));
          $("#investPlan").prop("selectedIndex", 0);
+        
+         $("#investPlan").change(function () {
+            // filterType = $("#investPlan option:selected").val()
+            table.ajax.reload();
+            
+        });
+
+
+        function set_portfolio_options(options){
+            $.each(options,function(index,value){
+                $("#portfolio_select").append(new Option(value.name,value.id));
+            });
+        }
+
+        var user_portfolios = JSON.parse('{{portfolio|tojson}}')
+        set_portfolio_options(user_portfolios)
+
+        
+         
      }); 
+     
  </script>
 
 {% endblock %}

@@ -75,15 +75,24 @@ class Stocks(db.Model):
     __tablename__ = 'stock'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45))
+    t1 = db.Column(db.String(45))
+    t2 = db.Column(db.String(45))
+    t3 = db.Column(db.String(45))
 
-    def __init__(self, id, name):
+    def __init__(self, id, name,t1="",t2="",t3=""):
         self.id = id
         self.name = name
+        self.t1 = t1
+        self.t2 = t2
+        self.t3 = t3
         
     def serialize(self):
         return{
             "stock_id":self.id,
-            "stock_name":self.name
+            "stock_name":self.name,
+            "t1":self.t1,
+            "t2":self.t2,
+            "t3":self.t3,
         }
 
 class Mapping_code(db.Model):
@@ -103,3 +112,26 @@ class Mapping_code(db.Model):
             "name":self.name,
             "category":self.category
         }
+
+class News(db.Model):
+    __tablename__ = 'news'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    url = db.Column(db.String(600))
+    date = db.Column(db.DateTime)
+    senti = db.Column(db.Integer)
+    stockid = db.Column(db.String(45))
+
+    def __init__(self, url, date, senti, stockid):
+        self.url = url
+        self.date = date
+        self.senti = senti
+        self.stockid = stockid
+
+    def serialize(self):
+        return{
+            "url":self.url,
+            "date":self.date,
+            "senti":self.senti,
+            "stockid":self.stockid
+        }
+
